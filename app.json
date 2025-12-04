@@ -25,6 +25,11 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "plugins": ["expo-secure-store"],
+    "extra": {
+      "apiUrl": "http://localhost:3000",
+      "environment": "development"
     }
   }
 }

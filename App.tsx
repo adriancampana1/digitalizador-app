@@ -1,20 +1,34 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { useEffect } from 'react';
 
+import { ActivityIndicator, View } from 'react-native';
+
+import { useApp } from '@/hooks';
+import { RootNavigator } from '@/navigation';
+
+/**
+ * ESTRUTURA DE API CLIENT CRIADA
+ * useAuth e useApp CRIADOS
+ *
+ * - [ ] IMPLEMENTAR BASE DE DESIGN SYSTEM DO APP
+ * - [ ] IMPLEMENTAR COMPONENTES DE TRATAMENTO DE ERROS (TOAST, MODAL, ETC)
+ */
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
+  const initializeApp = useApp(state => state.initializeApp);
+  const isAppReady = useApp(state => state.isAppReady);
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+  useEffect(() => {
+    const bootstrap = async () => {
+      await initializeApp();
+    };
+    bootstrap();
+  }, [initializeApp]);
+
+  if (!isAppReady) {
+    return (
+      <View>
+        <ActivityIndicator size="large" color="#007AFF" />
+      </View>
+    );
+  }
+  return <RootNavigator />;
+}

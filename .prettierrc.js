@@ -1,0 +1,20 @@
+module.exports = {
+  arrowParens: "avoid",
+  bracketSameLine: false,
+  bracketSpacing: true,
+  singleQuote: true,
+  trailingComma: "es5",
+  tabWidth: 2,
+  semi: true,
+  printWidth: 80,
+  endOfLine: "lf",
+  importOrder: [
+    "^react",
+    "^react-native",
+    "<THIRD_PARTY_MODULES>",
+    "^@/(.*)$",
+    "^[./]",
+  ],
+  importOrderSeparation: true,
+  importOrderSortSpecifiers: true,
+};
