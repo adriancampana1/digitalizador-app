@@ -44,5 +44,14 @@
     "prettier": "^3.7.3",
     "typescript": "~5.9.2"
   },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md}": [
+      "prettier --write"
+    ]
+  },
   "private": true
 }
