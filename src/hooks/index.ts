@@ -10,3 +10,8 @@ export const useAuth = useAuthStore;
  * Hook para acessar o estado e ações globais do app
  */
 export const useApp = useAppStore;
+
+/**
+ * Hook para exibir toasts de feedback ao usuário
+ */
+export { useAppToast } from './useAppToast';

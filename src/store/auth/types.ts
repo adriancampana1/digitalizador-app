@@ -1,11 +1,4 @@
-/**
- * INTERFACE TEMPORÁRIA DE USUÁRIO
- */
-export interface User {
-  id: string;
-  email: string;
-  name: string;
-}
+import type { User } from '@/features/auth/types';
 
 export type AuthState = {
   user: User | null;
@@ -15,7 +8,7 @@ export type AuthState = {
 };
 
 export type AuthActions = {
-  login: (email: string, password: string) => Promise<void>;
+  login: (phone: string, password: string) => Promise<void>;
   logout: () => void;
   setUser: (user: User | null) => void;
 };

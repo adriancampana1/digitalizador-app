@@ -53,27 +53,25 @@ function extractErrorMessage(data: unknown): string {
   return 'Ocorreu um erro inesperado';
 }
 
-function extractErrorCode(data: unknown): string | undefined {
-  if (typeof data === 'object' && data !== null) {
-    const obj = data as Record<string, unknown>;
-    if (typeof obj.code === 'string') return obj.code;
-  }
-  return undefined;
-}
-
 async function handleResponseError(error: AxiosError): Promise<never> {
   const status = error.response?.status ?? 0;
   const data = error.response?.data;
+
+  // para debug
+  console.error('🔴 Request Error:', {
+    url: error.config?.url,
+    method: error.config?.method?.toUpperCase(),
+    baseURL: error.config?.baseURL,
+    fullURL: `${error.config?.baseURL}${error.config?.url}`,
+    status,
+    message: error.message,
+  });
 
   if (status === 401) {
     await clearAuthToken();
   }
 
-  const apiError: ApiError = createApiError(
-    extractErrorMessage(data),
-    status,
-    extractErrorCode(data)
-  );
+  const apiError: ApiError = createApiError(extractErrorMessage(data), status);
 
   return Promise.reject(apiError);
 }

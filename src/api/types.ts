@@ -1,7 +1,6 @@
 export interface ApiError {
   message: string;
   status: number;
-  code?: string;
 }
 
 export interface ApiResponse<T> {
@@ -20,10 +19,6 @@ export function isApiError(error: unknown): error is ApiError {
   );
 }
 
-export function createApiError(
-  message: string,
-  status: number,
-  code?: string
-): ApiError {
-  return { message, status, code };
+export function createApiError(message: string, status: number): ApiError {
+  return { message, status };
 }

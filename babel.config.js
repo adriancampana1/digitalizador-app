@@ -1,14 +1,21 @@
 module.exports = function (api) {
   api.cache(true);
+
   return {
-    presets: ['babel-preset-expo'],
+    presets: [
+      ['babel-preset-expo', { jsxImportSource: 'nativewind' }],
+      'nativewind/babel',
+    ],
+
     plugins: [
       [
         'module-resolver',
         {
           root: ['./'],
+
           alias: {
             '@': './src',
+            'tailwind.config': './tailwind.config.js',
             '@api': './src/api',
             '@components': './src/components',
             '@configs': './src/configs',
@@ -22,6 +29,7 @@ module.exports = function (api) {
           },
         },
       ],
+      'react-native-reanimated/plugin',
     ],
   };
 };

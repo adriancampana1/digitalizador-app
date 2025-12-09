@@ -16,7 +16,7 @@ const extra = ExpoConstants.expoConfig?.extra as
   | undefined;
 
 export const env: EnvConfig = {
-  apiUrl: extra?.apiUrl ?? 'http://localhost:3000',
+  apiUrl: extra?.apiUrl ?? 'http://192.168.0.161:8080',
   environment: extra?.environment ?? 'development',
   timeout: 30000, // 30 seconds
 };
