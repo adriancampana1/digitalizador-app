@@ -1,18 +1,9 @@
 import type { ApiError, ApiResponse } from '@/api';
 import { apiClient } from '@/api';
 
-import type { User } from '../types';
+import type { AuthHttpServicePropsType, User } from '../types';
 
-interface AuthHttpServicePropsType {
-  login(phone: string, password: string): Promise<ApiResponse<User> | ApiError>;
-  register(
-    phone: string,
-    password: string,
-    name: string
-  ): Promise<ApiResponse<User> | ApiError>;
-}
-
-const authHttpService: AuthHttpServicePropsType = {
+class AuthHttpService implements AuthHttpServicePropsType {
   async login(
     phone: string,
     password: string
@@ -21,7 +12,7 @@ const authHttpService: AuthHttpServicePropsType = {
       phone,
       password,
     });
-  },
+  }
 
   async register(
     phone: string,
@@ -33,7 +24,7 @@ const authHttpService: AuthHttpServicePropsType = {
       password,
       name,
     });
-  },
-};
+  }
+}
 
-export default authHttpService;
+export default new AuthHttpService();

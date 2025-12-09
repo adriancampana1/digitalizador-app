@@ -1,3 +1,5 @@
+import type { ApiError, ApiResponse } from '@/api';
+
 export enum StorageProvider {
   SHAREPOINT = 'sharepoint',
 }
@@ -55,4 +57,18 @@ export interface DocumentDownloadResult {
   blob: Blob;
   fileName: string;
   contentType: string;
+}
+
+export interface DocumentHttpServiceType {
+  uploadDocument(
+    request: CreateDocumentRequest
+  ): Promise<ApiResponse<DocumentResponse> | ApiError>;
+
+  searchDocuments(
+    request: DocumentSearchRequest
+  ): Promise<ApiResponse<DocumentSearchResponse[]> | ApiError>;
+
+  findAllDocuments(): Promise<ApiResponse<DocumentResponse[]> | ApiError>;
+
+  downloadDocument(documentId: string): Promise<ApiResponse<Blob> | ApiError>;
 }

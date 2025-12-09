@@ -1,48 +1,17 @@
 import type { ApiError, ApiResponse } from '@/api';
 import { apiClient } from '@/api';
 
+import { createUploadFormData } from '../utils/document';
+
 import type {
   CreateDocumentRequest,
+  DocumentHttpServiceType,
   DocumentResponse,
   DocumentSearchRequest,
   DocumentSearchResponse,
 } from '../types';
 
-interface DocumentHttpServiceType {
-  uploadDocument(
-    request: CreateDocumentRequest
-  ): Promise<ApiResponse<DocumentResponse> | ApiError>;
-
-  searchDocuments(
-    request: DocumentSearchRequest
-  ): Promise<ApiResponse<DocumentSearchResponse[]> | ApiError>;
-
-  findAllDocuments(): Promise<ApiResponse<DocumentResponse[]> | ApiError>;
-
-  downloadDocument(documentId: string): Promise<ApiResponse<Blob> | ApiError>;
-}
-
-function createUploadFormData(request: CreateDocumentRequest): FormData {
-  const formData = new FormData();
-
-  formData.append('file', {
-    uri: request.file.uri,
-    name: request.file.name,
-    type: request.file.type,
-  } as unknown as Blob);
-
-  formData.append('title', request.title);
-  formData.append('storageProvider', request.storageProvider);
-  formData.append('documentType', request.documentType);
-
-  if (request.folderPath) {
-    formData.append('folderPath', request.folderPath);
-  }
-
-  return formData;
-}
-
-const documentHttpService: DocumentHttpServiceType = {
+class DocumentHttpService implements DocumentHttpServiceType {
   async uploadDocument(
     request: CreateDocumentRequest
   ): Promise<ApiResponse<DocumentResponse> | ApiError> {
@@ -53,7 +22,7 @@ const documentHttpService: DocumentHttpServiceType = {
         'Content-Type': 'multipart/form-data',
       },
     });
-  },
+  }
 
   /**
    * Busca documentos por texto no Elasticsearch
@@ -66,13 +35,13 @@ const documentHttpService: DocumentHttpServiceType = {
         searchText: request.searchText,
       },
     });
-  },
+  }
 
   async findAllDocuments(): Promise<
     ApiResponse<DocumentResponse[]> | ApiError
   > {
     return apiClient.get('/document');
-  },
+  }
 
   async downloadDocument(
     documentId: string
@@ -83,7 +52,7 @@ const documentHttpService: DocumentHttpServiceType = {
         Accept: '*/*',
       },
     });
-  },
-};
+  }
+}
 
-export default documentHttpService;
+export default new DocumentHttpService();
