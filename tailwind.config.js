@@ -1,4 +1,10 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 /** @type {import('tailwindcss').Config} */
+
+const { getTailwindBorderRadius } = require('./src/theme/tokens/radius');
+const { getTailwindSpacing } = require('./src/theme/tokens/spacing');
+const { fontSize } = require('./src/theme/tokens/typography');
+
 module.exports = {
   darkMode: process.env.DARK_MODE ? process.env.DARK_MODE : 'class',
   content: [
@@ -13,11 +19,27 @@ module.exports = {
   safelist: [
     {
       pattern:
-        /(bg|border|text|stroke|fill)-(primary|secondary|tertiary|error|success|warning|info|typography|outline|background|indicator)-(0|50|100|200|300|400|500|600|700|800|900|950|white|gray|black|error|warning|muted|success|info|light|dark|primary)/,
+        /(bg|border|text|stroke|fill)-(primary|secondary|tertiary|error|success|warning|info|typography|outline|background|indicator|gray)-(0|50|100|200|300|400|500|600|700|800|900|950|white|gray|black|error|warning|muted|success|info|light|dark|primary)/,
+    },
+    // Safelist para espaçamentos t-shirt
+    {
+      pattern:
+        /(p|m|gap|space)-(none|2xs|xs|sm|md|lg|xl|2xl|3xl|4xl|5xl|6xl|7xl|8xl)/,
+    },
+    {
+      pattern:
+        /(pt|pb|pl|pr|px|py|mt|mb|ml|mr|mx|my)-(none|2xs|xs|sm|md|lg|xl|2xl|3xl|4xl|5xl|6xl|7xl|8xl)/,
+    },
+    // Safelist para border-radius
+    {
+      pattern: /rounded-(none|xs|sm|md|lg|xl|2xl|3xl|full)/,
     },
   ],
   theme: {
     extend: {
+      spacing: getTailwindSpacing(),
+      borderRadius: getTailwindBorderRadius(),
+      fontSize,
       colors: {
         primary: {
           0: 'rgb(var(--color-primary-0)/<alpha-value>)',
@@ -32,6 +54,7 @@ module.exports = {
           800: 'rgb(var(--color-primary-800)/<alpha-value>)',
           900: 'rgb(var(--color-primary-900)/<alpha-value>)',
           950: 'rgb(var(--color-primary-950)/<alpha-value>)',
+          DEFAULT: 'rgb(var(--color-primary-500)/<alpha-value>)',
         },
         secondary: {
           0: 'rgb(var(--color-secondary-0)/<alpha-value>)',
@@ -46,6 +69,7 @@ module.exports = {
           800: 'rgb(var(--color-secondary-800)/<alpha-value>)',
           900: 'rgb(var(--color-secondary-900)/<alpha-value>)',
           950: 'rgb(var(--color-secondary-950)/<alpha-value>)',
+          DEFAULT: 'rgb(var(--color-secondary-500)/<alpha-value>)',
         },
         tertiary: {
           50: 'rgb(var(--color-tertiary-50)/<alpha-value>)',
@@ -173,6 +197,19 @@ module.exports = {
           info: 'rgb(var(--color-indicator-info)/<alpha-value>)',
           error: 'rgb(var(--color-indicator-error)/<alpha-value>)',
         },
+        gray: {
+          50: 'rgb(var(--color-gray-50)/<alpha-value>)',
+          100: 'rgb(var(--color-gray-100)/<alpha-value>)',
+          200: 'rgb(var(--color-gray-200)/<alpha-value>)',
+          300: 'rgb(var(--color-gray-300)/<alpha-value>)',
+          400: 'rgb(var(--color-gray-400)/<alpha-value>)',
+          500: 'rgb(var(--color-gray-500)/<alpha-value>)',
+          600: 'rgb(var(--color-gray-600)/<alpha-value>)',
+          700: 'rgb(var(--color-gray-700)/<alpha-value>)',
+          800: 'rgb(var(--color-gray-800)/<alpha-value>)',
+          900: 'rgb(var(--color-gray-900)/<alpha-value>)',
+          950: 'rgb(var(--color-gray-950)/<alpha-value>)',
+        },
       },
       fontFamily: {
         heading: undefined,
@@ -186,9 +223,6 @@ module.exports = {
       },
       fontWeight: {
         extrablack: '950',
-      },
-      fontSize: {
-        '2xs': '10px',
       },
       boxShadow: {
         'hard-1': '-2px 2px 8px 0px rgba(38, 38, 38, 0.20)',
