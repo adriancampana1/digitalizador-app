@@ -1,7 +1,12 @@
 export const fontFamily = {
-  sans: 'System',
-
+  sans: 'LexendDeca_400Regular',
+  heading: 'LexendDeca_700Bold',
   mono: 'monospace',
+  light: 'LexendDeca_300Light',
+  regular: 'LexendDeca_400Regular',
+  medium: 'LexendDeca_500Medium',
+  semibold: 'LexendDeca_600SemiBold',
+  bold: 'LexendDeca_700Bold',
 } as const;
 
 export const fontSize = {

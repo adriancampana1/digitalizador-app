@@ -56,7 +56,7 @@ module.exports = {
     'react-native/no-raw-text': [
       'warn',
       {
-        skip: ['Button'],
+        skip: ['Button', 'AppText'],
       },
     ],
 

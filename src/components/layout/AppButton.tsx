@@ -11,7 +11,7 @@ type ButtonAction =
 type ButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
 type AppButtonPropsType = {
-  children: React.ReactNode;
+  title: string;
   variant?: ButtonVariant;
   action?: ButtonAction;
   onPress?: () => void;
@@ -26,7 +26,7 @@ type AppButtonPropsType = {
 };
 
 export const AppButton = ({
-  children,
+  title,
   variant = 'solid',
   action = 'primary',
   onPress,
@@ -40,7 +40,8 @@ export const AppButton = ({
   className,
 }: AppButtonPropsType) => {
   const fullWidthClass = fullWidth ? 'w-full' : '';
-  const combinedClassName = `${fullWidthClass} ${className ?? ''}`.trim();
+  const combinedClassName =
+    `${fullWidthClass} rounded-lg h-16 ${className ?? ''}`.trim();
 
   return (
     <Button
@@ -53,8 +54,8 @@ export const AppButton = ({
     >
       {isLoading && <ButtonSpinner />}
       {!isLoading && leftIcon && <ButtonIcon as={leftIcon} />}
-      <ButtonText>
-        {isLoading && loadingText ? loadingText : children}
+      <ButtonText className="text-lg mx-1">
+        {isLoading && loadingText ? loadingText : title}
       </ButtonText>
       {!isLoading && rightIcon && <ButtonIcon as={rightIcon} />}
     </Button>

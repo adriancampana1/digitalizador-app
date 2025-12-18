@@ -1,13 +1,18 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 
 import { ActivityIndicator, View } from 'react-native';
 
-import { useApp } from '@/hooks';
+import * as SplashScreen from 'expo-splash-screen';
+
+import { useApp, useFonts } from '@/hooks';
 import { RootNavigator } from '@/navigation';
+
+SplashScreen.preventAutoHideAsync();
 
 export const AppBootstrap = () => {
   const initializeApp = useApp(state => state.initializeApp);
   const isAppReady = useApp(state => state.isAppReady);
+  const { fontsLoaded, fontError } = useFonts();
 
   useEffect(() => {
     const bootstrap = async () => {
@@ -16,13 +21,27 @@ export const AppBootstrap = () => {
     bootstrap();
   }, [initializeApp]);
 
-  if (!isAppReady) {
+  const onLayoutRootView = useCallback(async () => {
+    if (isAppReady && fontsLoaded) {
+      await SplashScreen.hideAsync();
+    }
+  }, [isAppReady, fontsLoaded]);
+
+  if (fontError) {
+    console.error('Erro ao carregar fontes:', fontError);
+  }
+
+  if (!isAppReady || !fontsLoaded) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <View className="flex-1 justify-center items-center">
         <ActivityIndicator size="large" color="#007AFF" />
       </View>
     );
   }
 
-  return <RootNavigator />;
+  return (
+    <View className="flex-1" onLayout={onLayoutRootView}>
+      <RootNavigator />
+    </View>
+  );
 };

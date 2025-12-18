@@ -37,7 +37,7 @@ function generateColorVarsFromTokens() {
     '--color-secondary-900': hexToRgb(colors.secondary[900]),
     '--color-secondary-950': hexToRgb(colors.secondary[950]),
 
-    // Tertiary (dos tokens)
+    // Tertiary (dos tokens) - Laranja
     '--color-tertiary-0': hexToRgb(colors.tertiary[0]),
     '--color-tertiary-50': hexToRgb(colors.tertiary[50]),
     '--color-tertiary-100': hexToRgb(colors.tertiary[100]),
@@ -50,6 +50,20 @@ function generateColorVarsFromTokens() {
     '--color-tertiary-800': hexToRgb(colors.tertiary[800]),
     '--color-tertiary-900': hexToRgb(colors.tertiary[900]),
     '--color-tertiary-950': hexToRgb(colors.tertiary[950]),
+
+    // Accent (dos tokens) - Roxo
+    '--color-accent-0': hexToRgb(colors.accent[50]),
+    '--color-accent-50': hexToRgb(colors.accent[50]),
+    '--color-accent-100': hexToRgb(colors.accent[100]),
+    '--color-accent-200': hexToRgb(colors.accent[200]),
+    '--color-accent-300': hexToRgb(colors.accent[300]),
+    '--color-accent-400': hexToRgb(colors.accent[400]),
+    '--color-accent-500': hexToRgb(colors.accent[500]),
+    '--color-accent-600': hexToRgb(colors.accent[600]),
+    '--color-accent-700': hexToRgb(colors.accent[700]),
+    '--color-accent-800': hexToRgb(colors.accent[800]),
+    '--color-accent-900': hexToRgb(colors.accent[900]),
+    '--color-accent-950': hexToRgb(colors.accent[950]),
 
     // Typography (dos tokens)
     '--color-typography-0': hexToRgb(colors.typography[0]),

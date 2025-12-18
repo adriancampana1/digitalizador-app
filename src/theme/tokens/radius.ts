@@ -1,12 +1,12 @@
 export const radius = {
   none: 0,
-  xs: 2,
-  sm: 4,
-  md: 6,
-  lg: 8,
-  xl: 12,
-  '2xl': 16,
-  '3xl': 24,
+  xs: 4,
+  sm: 8, // --radius-sm: 8px
+  md: 12, // --radius-md: 12px
+  lg: 16, // --radius-lg: 16px
+  xl: 24, // --radius-xl: 24px
+  '2xl': 32,
+  '3xl': 40,
   full: 9999,
 } as const;
 

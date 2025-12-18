@@ -11,7 +11,7 @@ import {
   FormControlLabel,
   FormControlLabelText,
 } from '../ui/form-control';
-import { AlertCircleIcon } from '../ui/icon';
+import { AlertCircleIcon, Icon } from '../ui/icon';
 
 type InputVariant = 'outline' | 'underlined' | 'rounded';
 type KeyboardType = 'default' | 'email-address' | 'numeric' | 'phone-pad';
@@ -64,6 +64,8 @@ export const AppInput = ({
     ${isInvalid ? 'border-error-500' : ''}
     ${isDisabled ? 'opacity-50' : ''}
     flex-row items-center
+    rounded-lg
+    h-14
   `.trim();
 
   return (
@@ -79,11 +81,9 @@ export const AppInput = ({
         </FormControlLabel>
       )}
 
-      <View className={`px-2 ${inputBaseStyle} ${inputClassName ?? ''}`}>
+      <View className={`px-4 ${inputBaseStyle} ${inputClassName ?? ''}`}>
         {LeftIcon && (
-          <View className="mr-2">
-            <LeftIcon className={`text-typography-400`} />
-          </View>
+          <Icon as={LeftIcon} size="lg" className="text-typography-500 mr-3" />
         )}
 
         <TextInput
@@ -98,9 +98,7 @@ export const AppInput = ({
         />
 
         {RightIcon && (
-          <View className="ml-2">
-            <RightIcon className={`text-typography-400`} />
-          </View>
+          <Icon as={RightIcon} size="lg" className="text-typography-500 ml-3" />
         )}
       </View>
 

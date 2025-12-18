@@ -36,13 +36,13 @@ export const AppContainer = ({
   variant = 'view',
   direction = 'col',
   justifyContent = 'flex-start',
-  alignItems = 'stretch',
+  alignItems = 'flex-start',
   spacing = 'sm',
   wrap = false,
   backgroundColor = 'transparent',
   flex = false,
-  paddingHorizontal,
-  paddingVertical,
+  paddingHorizontal = '3xl',
+  paddingVertical = 'lg',
   className,
   style,
 }: AppContainerPropsType) => {
@@ -52,12 +52,14 @@ export const AppContainer = ({
     <Container
       className={`flex-${direction} bg-${backgroundColor} ${
         flex ? 'flex-1' : ''
-      } ${paddingHorizontal ? `px-${paddingHorizontal}` : ''} ${
-        paddingVertical ? `py-${paddingVertical}` : ''
+      } ${paddingHorizontal && paddingHorizontal !== 'none' ? `px-${paddingHorizontal}` : ''} ${
+        paddingVertical && paddingVertical !== 'none'
+          ? `py-${paddingVertical}`
+          : ''
       } ${className || ''}
       ${justifyContent ? `justify-${justifyContent}` : ''}
       ${alignItems ? `items-${alignItems}` : ''}
-      ${spacing ? `space-${direction === 'row' ? 'x' : 'y'}-${spacing}` : ''}
+      ${spacing ? `gap-${spacing}` : ''}
       ${wrap ? 'flex-wrap' : ''}`}
       style={style}
     >

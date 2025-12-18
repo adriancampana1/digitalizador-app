@@ -3,7 +3,7 @@
 
 const { getTailwindBorderRadius } = require('./src/theme/tokens/radius');
 const { getTailwindSpacing } = require('./src/theme/tokens/spacing');
-const { fontSize } = require('./src/theme/tokens/typography');
+const { fontSize, fontFamily } = require('./src/theme/tokens/typography');
 
 module.exports = {
   darkMode: process.env.DARK_MODE ? process.env.DARK_MODE : 'class',
@@ -34,12 +34,26 @@ module.exports = {
     {
       pattern: /rounded-(none|xs|sm|md|lg|xl|2xl|3xl|full)/,
     },
+    // Safelist para font-family
+    {
+      pattern: /font-(sans|heading|mono|light|regular|medium|semibold|bold)/,
+    },
   ],
   theme: {
     extend: {
       spacing: getTailwindSpacing(),
       borderRadius: getTailwindBorderRadius(),
       fontSize,
+      fontFamily: {
+        sans: [fontFamily.sans],
+        heading: [fontFamily.heading],
+        mono: [fontFamily.mono],
+        light: [fontFamily.light],
+        regular: [fontFamily.regular],
+        medium: [fontFamily.medium],
+        semibold: [fontFamily.semibold],
+        bold: [fontFamily.bold],
+      },
       colors: {
         primary: {
           0: 'rgb(var(--color-primary-0)/<alpha-value>)',
@@ -210,16 +224,6 @@ module.exports = {
           900: 'rgb(var(--color-gray-900)/<alpha-value>)',
           950: 'rgb(var(--color-gray-950)/<alpha-value>)',
         },
-      },
-      fontFamily: {
-        heading: undefined,
-        body: undefined,
-        mono: undefined,
-        jakarta: ['var(--font-plus-jakarta-sans)'],
-        roboto: ['var(--font-roboto)'],
-        code: ['var(--font-source-code-pro)'],
-        inter: ['var(--font-inter)'],
-        'space-mono': ['var(--font-space-mono)'],
       },
       fontWeight: {
         extrablack: '950',

@@ -1,60 +1,84 @@
 export const colors = {
+  // Paleta Primária - Azul Escuro (#003D5C)
+  // Uso: Cor principal - cabeçalhos, botões primários, títulos
   primary: {
-    50: '#f5f5f5',
-    100: '#FE0000',
-    200: '#FE0000',
-    300: '#FE0000',
-    400: '#FE0000',
-    500: '#FE0000',
-    600: '#FE0000',
-    700: '#FE0000',
-    800: '#FE0000',
-    900: '#FE0000',
-    950: '#FE0000',
+    50: '#e6f0f5',
+    100: '#cce1eb',
+    200: '#99c3d7',
+    300: '#66a5c3',
+    400: '#3387af',
+    500: '#003D5C', // Cor principal
+    600: '#003651',
+    700: '#002f46',
+    800: '#00283b',
+    900: '#002130',
+    950: '#001a25',
   },
 
+  // Paleta Secundária - Azul Médio (#004B73)
+  // Uso: Cor secundária - elementos de destaque
   secondary: {
-    50: '#fafafa',
-    100: '#f5f5f5',
-    200: '#e5e5e5',
-    300: '#d4d4d4',
-    400: '#a3a3a3',
-    500: '#737373',
-    600: '#525252',
-    700: '#404040',
-    800: '#262626',
-    900: '#171717',
-    950: '#0a0a0a',
+    50: '#e6f2f8',
+    100: '#cce5f1',
+    200: '#99cbe3',
+    300: '#66b1d5',
+    400: '#3397c7',
+    500: '#004B73', // Cor secundária
+    600: '#004367',
+    700: '#003b5b',
+    800: '#00334f',
+    900: '#002b43',
+    950: '#002337',
   },
 
+  // Paleta de Acento - Laranja (#D97706)
+  // Uso: Links de cadastro e textos de destaque
   tertiary: {
-    0: '#fffaf5',
-    50: '#fff2e5',
-    100: '#ffe9d5',
-    200: '#fed1aa',
-    300: '#fdb474',
-    400: '#fb9d4b',
-    500: '#e78128',
-    600: '#d7751f',
-    700: '#b4621a',
-    800: '#824917',
-    900: '#6c3d13',
-    950: '#543112',
+    0: '#fffbf5',
+    50: '#fff7ed',
+    100: '#ffedd5',
+    200: '#fed7aa',
+    300: '#fdba74',
+    400: '#fb923c',
+    500: '#D97706', // Laranja principal
+    600: '#c2690a',
+    700: '#9a5308',
+    800: '#7c4307',
+    900: '#653705',
+    950: '#4d2904',
   },
 
+  // Paleta de Acento - Roxo (#7C5CDB)
+  // Uso: Botões de cookies e CTAs secundários
+  accent: {
+    50: '#f5f3fc',
+    100: '#ebe7f9',
+    200: '#d7cff3',
+    300: '#c3b7ed',
+    400: '#af9fe7',
+    500: '#7C5CDB', // Roxo principal
+    600: '#6a4bc8',
+    700: '#583ab5',
+    800: '#4629a2',
+    900: '#34188f',
+    950: '#22077c',
+  },
+
+  // Tipografia
+  // Texto principal: #1F2937 | Texto secundário: #6B7280
   typography: {
-    0: '#fefeff',
-    50: '#f5f5f5',
-    100: '#e5e5e5',
-    200: '#dbdbdc',
-    300: '#d4d4d4',
-    400: '#a3a3a3',
-    500: '#8c8c8c',
-    600: '#737373',
-    700: '#525252',
-    800: '#404040',
-    900: '#262627',
-    950: '#171717',
+    0: '#ffffff',
+    50: '#f9fafb',
+    100: '#f3f4f6',
+    200: '#e5e7eb',
+    300: '#d1d5db',
+    400: '#9ca3af',
+    500: '#6B7280', // Texto secundário/muted
+    600: '#4b5563',
+    700: '#374151',
+    800: '#1F2937', // Texto principal
+    900: '#111827',
+    950: '#030712',
   },
 
   success: {
@@ -113,18 +137,29 @@ export const colors = {
     950: '#172554',
   },
 
+  // Cinzas - Baseado na identidade visual
+  // Fundo geral: #F5F5F5 | Fundo cards: #E8E8E8 | Ícones: #B8C5D0
   gray: {
-    50: '#fafafa',
-    100: '#f4f4f5',
+    50: '#F5F5F5', // Fundo geral das páginas
+    100: '#E8E8E8', // Fundo dos cards e seções
     200: '#e4e4e7',
     300: '#d4d4d8',
-    400: '#a1a1aa',
+    400: '#B8C5D0', // Background dos círculos de ícones
     500: '#71717a',
     600: '#52525b',
     700: '#3f3f46',
     800: '#27272a',
     900: '#18181b',
     950: '#09090b',
+  },
+
+  // Cores de background semânticas
+  background: {
+    light: '#F5F5F5', // Fundo geral das páginas
+    card: '#FFFFFF', // Fundo de cards, modais e áreas de conteúdo
+    section: '#E8E8E8', // Fundo dos cards e seções
+    icon: '#B8C5D0', // Background dos círculos de ícones
+    dark: '#003D5C', // Fundo escuro (primário)
   },
 
   white: '#ffffff',

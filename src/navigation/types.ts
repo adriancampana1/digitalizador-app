@@ -9,8 +9,8 @@ export type AuthStackParamList = {
 
 export type AppTabParamList = {
   Home: undefined;
-  Documents: undefined;
-  Folders: undefined;
+  Documents: NavigatorScreenParams<DocumentStackParamList>;
+  Folders: NavigatorScreenParams<FolderStackParamList>;
 };
 
 export type DocumentStackParamList = {
