@@ -81,7 +81,7 @@ export const AppInput = ({
         </FormControlLabel>
       )}
 
-      <View className={`px-4 ${inputBaseStyle} ${inputClassName ?? ''}`}>
+      <View className={`px-4 ${inputBaseStyle} ${inputClassName ?? ''} w-full`}>
         {LeftIcon && (
           <Icon as={LeftIcon} size="lg" className="text-typography-500 mr-3" />
         )}

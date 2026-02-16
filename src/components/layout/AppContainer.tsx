@@ -10,17 +10,36 @@ type AppContainerVariant = 'safeAreaView' | 'view';
 type FlexDirection = 'row' | 'col';
 type Spacing = keyof typeof theme.spacing;
 
+type JustifyContent =
+  | 'center'
+  | 'flex-start'
+  | 'flex-end'
+  | 'space-between'
+  | 'space-around';
+
+type AlignItems = 'center' | 'flex-start' | 'flex-end' | 'stretch';
+
+const justifyMap: Record<JustifyContent, string> = {
+  center: 'justify-center',
+  'flex-start': 'justify-start',
+  'flex-end': 'justify-end',
+  'space-between': 'justify-between',
+  'space-around': 'justify-around',
+};
+
+const alignMap: Record<AlignItems, string> = {
+  center: 'items-center',
+  'flex-start': 'items-start',
+  'flex-end': 'items-end',
+  stretch: 'items-stretch',
+};
+
 type AppContainerPropsType = {
   children: React.ReactNode;
   variant?: AppContainerVariant;
   direction?: FlexDirection;
-  justifyContent?:
-    | 'center'
-    | 'flex-start'
-    | 'flex-end'
-    | 'space-between'
-    | 'space-around';
-  alignItems?: 'center' | 'flex-start' | 'flex-end' | 'stretch';
+  justifyContent?: JustifyContent;
+  alignItems?: AlignItems;
   spacing?: Spacing;
   wrap?: boolean;
   backgroundColor?: keyof typeof theme.colors | 'transparent';
@@ -57,8 +76,8 @@ export const AppContainer = ({
           ? `py-${paddingVertical}`
           : ''
       } ${className || ''}
-      ${justifyContent ? `justify-${justifyContent}` : ''}
-      ${alignItems ? `items-${alignItems}` : ''}
+      ${justifyContent ? justifyMap[justifyContent] : ''}
+      ${alignItems ? alignMap[alignItems] : ''}
       ${spacing ? `gap-${spacing}` : ''}
       ${wrap ? 'flex-wrap' : ''}`}
       style={style}

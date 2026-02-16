@@ -6,6 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
+  withSpring,
 } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -69,6 +70,9 @@ const BOTTOM_MARGIN = spacing.md; // 12
 const TAB_BAR_RADIUS = radius['2xl']; // 32
 const CENTER_BUTTON_RADIUS = radius.lg; // 16
 
+// ─── Animação padrão (spring) ────────────────────────────────
+const SPRING_CONFIG = { damping: 15, stiffness: 350 } as const;
+
 type TabButtonProps = {
   config: TabConfig;
   isFocused: boolean;
@@ -88,12 +92,24 @@ const TabButton: React.FC<TabButtonProps> = ({
     transform: [{ scale: scale.value }],
   }));
 
+  const handlePressIn = () => {
+    'worklet';
+    scale.set(withSpring(0.88, SPRING_CONFIG));
+  };
+
+  const handlePressOut = () => {
+    'worklet';
+    scale.set(withSpring(1, SPRING_CONFIG));
+  };
+
   // ── Botão central (Scan / Digitalizar) ──
   if (config.isCenterAction) {
     return (
       <Pressable
         onPress={onPress}
         onLongPress={onLongPress}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
         accessibilityRole="button"
         accessibilityLabel={config.label}
         accessibilityState={{ selected: isFocused }}

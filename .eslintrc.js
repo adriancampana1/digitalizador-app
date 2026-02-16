@@ -150,7 +150,7 @@ module.exports = {
       },
       node: {
         extensions: ['.js', '.jsx', '.ts', '.tsx'],
-        paths: ['src'],
+        moduleDirectory: ['node_modules', 'src'],
       },
     },
     'import/parsers': {
