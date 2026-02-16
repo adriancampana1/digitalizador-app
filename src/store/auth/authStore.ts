@@ -1,8 +1,9 @@
 import { create } from 'zustand';
 
 import { apiClient, clearAuthToken, setAuthToken } from '@/api';
+import type { User } from '@/features/auth/types';
 
-import type { AuthStore, User } from './types';
+import type { AuthStore } from './types';
 
 export const useAuthStore = create<AuthStore>()(set => ({
   user: null,

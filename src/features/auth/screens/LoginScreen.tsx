@@ -7,15 +7,20 @@ import { AppSpacer } from '@/components/layout/AppSpacer';
 import { AppText } from '@/components/layout/AppText';
 import { Logo } from '@/components/Logo';
 import { ArrowRightIcon, EyeIcon } from '@/components/ui/icon';
-import { useAppNavigation } from '@/hooks';
+import { useAppNavigation, useAuth } from '@/hooks';
 
 const LoginScreen = () => {
   const navigation = useAppNavigation();
+  const { login } = useAuth();
 
   const handleNavigateToRegister = () => {
     navigation.navigate('Auth', {
       screen: 'Register',
     });
+  };
+
+  const handleLogin = () => {
+    return login('43999999999', 'password');
   };
   return (
     <AppContainer flex justifyContent="space-between" className="bg-white">
@@ -68,7 +73,7 @@ const LoginScreen = () => {
         <AppButton
           title="Entrar"
           fullWidth
-          onPress={() => {}}
+          onPress={handleLogin}
           rightIcon={ArrowRightIcon}
           className="rounded-2xl shadow-md"
         />
