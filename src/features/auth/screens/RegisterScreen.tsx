@@ -9,10 +9,12 @@ import { AppSpacer } from '@/components/base/AppSpacer';
 import { AppText } from '@/components/base/AppText';
 import { Logo } from '@/components/Logo';
 import { ArrowRightIcon, EyeIcon, EyeOffIcon } from '@/components/ui/icon';
-import { useAppNavigation, useAuth, usePhoneMask } from '@/hooks';
+import { useAppNavigation, useAppToast, useAuth, usePhoneMask } from '@/hooks';
+import { isApiError } from '@/utils/api';
 
 const RegisterScreen = () => {
   const { register, isLoading } = useAuth();
+  const { error: showError } = useAppToast();
 
   const { value: maskedPhone, rawValue: phone, applyMask } = usePhoneMask();
   const [name, setName] = useState('');
@@ -24,8 +26,12 @@ const RegisterScreen = () => {
   const handleRegister = async () => {
     try {
       await register(phone, name, password);
-    } catch {
-      console.error('Erro ao registrar usuário');
+    } catch (err) {
+      if (isApiError(err)) {
+        showError(err.message);
+      } else {
+        showError('Erro ao registrar usuário. Por favor, tente novamente.');
+      }
     }
   };
 

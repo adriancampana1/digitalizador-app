@@ -1,7 +1,7 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
-// import { useAuth } from '@/hooks';
+import { useAuth } from '@/hooks';
 
 import AppTabNavigator from './AppNavigator';
 import AuthStackNavigator from './AuthNavigator';
@@ -11,8 +11,8 @@ import type { RootStackParamList } from './types';
 const Stack = createStackNavigator<RootStackParamList>();
 
 const RootNavigator = () => {
-  // const { isAuthenticated } = useAuth();
-  const isAuthenticated = false;
+  const { isAuthenticated } = useAuth();
+  // const isAuthenticated = false;
 
   return (
     <NavigationContainer>

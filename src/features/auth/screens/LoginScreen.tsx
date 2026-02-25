@@ -14,7 +14,7 @@ import { isApiError } from '@/utils/api';
 
 const LoginScreen = () => {
   const { login, isLoading } = useAuth();
-  const { error } = useAppToast();
+  const { error: showError } = useAppToast();
   const { value: maskedPhone, rawValue: phone, applyMask } = usePhoneMask();
 
   const [password, setPassword] = useState('');
@@ -31,9 +31,11 @@ const LoginScreen = () => {
   const handleLogin = async () => {
     try {
       await login(phone, password);
-    } catch {
-      if (isApiError(error)) {
-        console.error('Erro de autenticação:', error.message);
+    } catch (err) {
+      if (isApiError(err)) {
+        showError(err.message);
+      } else {
+        showError('Erro ao fazer login. Por favor, tente novamente.');
       }
     }
     return login(phone, password);
