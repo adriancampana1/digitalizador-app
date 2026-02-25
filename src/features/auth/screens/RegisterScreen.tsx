@@ -1,10 +1,10 @@
 import { Pressable, View } from 'react-native';
 
-import { AppButton } from '@/components/layout/AppButton';
-import { AppContainer } from '@/components/layout/AppContainer';
-import { AppInput } from '@/components/layout/AppInput';
-import { AppSpacer } from '@/components/layout/AppSpacer';
-import { AppText } from '@/components/layout/AppText';
+import { AppButton } from '@/components/base/AppButton';
+import { AppContainer } from '@/components/base/AppContainer';
+import { AppInput } from '@/components/base/AppInput';
+import { AppSpacer } from '@/components/base/AppSpacer';
+import { AppText } from '@/components/base/AppText';
 import { Logo } from '@/components/Logo';
 import { ArrowRightIcon, EyeIcon } from '@/components/ui/icon';
 import { useAppNavigation } from '@/hooks';

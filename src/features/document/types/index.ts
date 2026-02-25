@@ -2,6 +2,10 @@ import type { ApiError, ApiResponse } from '@/api';
 
 export enum StorageProvider {
   SHAREPOINT = 'sharepoint',
+  GOOGLE_DRIVE = 'google_drive',
+  ONEDRIVE = 'onedrive',
+  DROPBOX = 'dropbox',
+  LOCAL = 'local',
 }
 
 /**

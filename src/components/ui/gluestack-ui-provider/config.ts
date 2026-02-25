@@ -147,6 +147,12 @@ function generateColorVarsFromTokens() {
     '--color-gray-800': hexToRgb(colors.gray[800]),
     '--color-gray-900': hexToRgb(colors.gray[900]),
     '--color-gray-950': hexToRgb(colors.gray[950]),
+
+    '--color-background-light': hexToRgb(colors.background.light),
+    '--color-background-dark': hexToRgb(colors.background.dark),
+    '--color-background-card': hexToRgb(colors.background.card),
+    '--color-background-section': hexToRgb(colors.background.section),
+    '--color-background-icon': hexToRgb(colors.background.icon),
   };
 }
 

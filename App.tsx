@@ -1,6 +1,6 @@
 import './global.css';
 
-import { AppBootstrap } from './src/components/layout/AppBootstrap';
+import { AppBootstrap } from './src/components/base/AppBootstrap';
 import { GluestackUIProvider } from './src/components/ui/gluestack-ui-provider';
 
 /**

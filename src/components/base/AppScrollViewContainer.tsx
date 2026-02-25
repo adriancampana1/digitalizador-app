@@ -21,7 +21,7 @@ export const AppScrollViewContainer = ({
   contentPadding = 'md',
   paddingHorizontal = 'none',
   paddingVertical = 'none',
-  backgroundColor = 'white',
+  backgroundColor,
   showsHorizontalScrollIndicator = false,
   showsVerticalScrollIndicator = false,
   className = '',

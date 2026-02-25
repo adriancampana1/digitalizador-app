@@ -34,6 +34,11 @@ const alignMap: Record<AlignItems, string> = {
   stretch: 'items-stretch',
 };
 
+type BackgroundColor =
+  | keyof typeof theme.colors
+  | `background-${keyof typeof theme.colors.background}`
+  | 'transparent';
+
 type AppContainerPropsType = {
   children: React.ReactNode;
   variant?: AppContainerVariant;
@@ -42,7 +47,7 @@ type AppContainerPropsType = {
   alignItems?: AlignItems;
   spacing?: Spacing;
   wrap?: boolean;
-  backgroundColor?: keyof typeof theme.colors | 'transparent';
+  backgroundColor?: BackgroundColor;
   flex?: boolean;
   paddingHorizontal?: keyof typeof theme.spacing;
   paddingVertical?: keyof typeof theme.spacing;
@@ -58,9 +63,9 @@ export const AppContainer = ({
   alignItems = 'flex-start',
   spacing = 'sm',
   wrap = false,
-  backgroundColor = 'transparent',
+  backgroundColor = 'background-light',
   flex = false,
-  paddingHorizontal = '3xl',
+  paddingHorizontal = '2xl',
   paddingVertical = 'lg',
   className,
   style,

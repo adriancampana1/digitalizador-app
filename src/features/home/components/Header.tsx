@@ -1,12 +1,12 @@
-import { AppContainer } from '@/components/layout/AppContainer';
-import { AppInput } from '@/components/layout/AppInput';
-import { AppText } from '@/components/layout/AppText';
+import { AppContainer } from '@/components/base/AppContainer';
+import { AppInput } from '@/components/base/AppInput';
+import { AppText } from '@/components/base/AppText';
 import { SearchIcon } from '@/components/ui/icon';
 
 const Header = () => {
   return (
     <AppContainer
-      backgroundColor="white"
+      backgroundColor="background-card"
       variant="safeAreaView"
       className="pt-6 rounded-br-3xl rounded-bl-3xl shadow-lg"
     >

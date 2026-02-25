@@ -4,9 +4,19 @@
  *
  * hexToRgb('#ffffff') // '255 255 255'
  * hexToRgb('#3b82f6') // '59 130 246'
+ * hexToRgb('#000')    // '0 0 0'
+ * hexToRgb('#fff')    // '255 255 255'
  */
 export function hexToRgb(hex: string): string {
-  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  // Remove o # se presente
+  let h = hex.replace(/^#/, '');
+
+  // Expande shorthand (3 dígitos → 6 dígitos): #abc → #aabbcc
+  if (h.length === 3) {
+    h = h[0]! + h[0]! + h[1]! + h[1]! + h[2]! + h[2]!;
+  }
+
+  const result = /^([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(h);
   if (!result || !result[1] || !result[2] || !result[3]) {
     console.warn(`[Theme] Invalid hex color: ${hex}`);
     return '0 0 0';
