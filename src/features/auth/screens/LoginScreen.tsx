@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import { Pressable, View } from 'react-native';
 
 import { AppButton } from '@/components/base/AppButton';
@@ -6,12 +8,19 @@ import { AppInput } from '@/components/base/AppInput';
 import { AppSpacer } from '@/components/base/AppSpacer';
 import { AppText } from '@/components/base/AppText';
 import { Logo } from '@/components/Logo';
-import { ArrowRightIcon, EyeIcon } from '@/components/ui/icon';
-import { useAppNavigation, useAuth } from '@/hooks';
+import { ArrowRightIcon, EyeIcon, EyeOffIcon } from '@/components/ui/icon';
+import { useAppNavigation, useAppToast, useAuth, usePhoneMask } from '@/hooks';
+import { isApiError } from '@/utils/api';
 
 const LoginScreen = () => {
+  const { login, isLoading } = useAuth();
+  const { error } = useAppToast();
+  const { value: maskedPhone, rawValue: phone, applyMask } = usePhoneMask();
+
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+
   const navigation = useAppNavigation();
-  const { login } = useAuth();
 
   const handleNavigateToRegister = () => {
     navigation.navigate('Auth', {
@@ -19,11 +28,23 @@ const LoginScreen = () => {
     });
   };
 
-  const handleLogin = () => {
-    return login('43999999999', 'password');
+  const handleLogin = async () => {
+    try {
+      await login(phone, password);
+    } catch {
+      if (isApiError(error)) {
+        console.error('Erro de autenticação:', error.message);
+      }
+    }
+    return login(phone, password);
   };
   return (
-    <AppContainer flex justifyContent="space-between" className="bg-white">
+    <AppContainer
+      flex
+      justifyContent="space-between"
+      className="bg-background-light"
+      alignItems="stretch"
+    >
       <View className="absolute top-0 right-0 w-1/2 h-72 bg-typography-100 rounded-bl-[120px] opacity-60" />
 
       <AppContainer
@@ -31,6 +52,8 @@ const LoginScreen = () => {
         paddingHorizontal="none"
         flex
         justifyContent="center"
+        backgroundColor="background-light"
+        alignItems="stretch"
       >
         <Logo size="2xl" />
 
@@ -54,21 +77,22 @@ const LoginScreen = () => {
           <AppInput
             label="Telefone"
             placeholder="(99) 99999-9999"
-            value=""
-            onChangeText={() => {}}
+            value={maskedPhone}
+            onChangeText={applyMask}
             keyboardType="phone-pad"
           />
           <AppInput
             label="Senha"
             placeholder="••••••••"
-            value=""
-            onChangeText={() => {}}
-            secureTextEntry
-            rightIcon={EyeIcon}
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry={!showPassword}
+            rightIcon={showPassword ? EyeOffIcon : EyeIcon}
+            onRightIconPress={() => setShowPassword(!showPassword)}
           />
         </AppContainer>
 
-        <AppSpacer size="3xl" />
+        <AppSpacer size="sm" />
 
         <AppButton
           title="Entrar"
@@ -76,6 +100,8 @@ const LoginScreen = () => {
           onPress={handleLogin}
           rightIcon={ArrowRightIcon}
           className="rounded-2xl shadow-md"
+          isDisabled={isLoading}
+          isLoading={isLoading}
         />
       </AppContainer>
 

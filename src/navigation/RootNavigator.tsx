@@ -12,7 +12,7 @@ const Stack = createStackNavigator<RootStackParamList>();
 
 const RootNavigator = () => {
   // const { isAuthenticated } = useAuth();
-  const isAuthenticated = true;
+  const isAuthenticated = false;
 
   return (
     <NavigationContainer>

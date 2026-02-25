@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { TextInput, View } from 'react-native';
+import { Pressable, TextInput, View } from 'react-native';
 
 import {
   FormControl,
@@ -30,6 +30,7 @@ type AppInputPropsType = {
   secureTextEntry?: boolean;
   leftIcon?: React.ComponentType<any>;
   rightIcon?: React.ComponentType<any>;
+  onRightIconPress?: () => void;
   className?: string;
   inputClassName?: string;
 };
@@ -54,6 +55,7 @@ export const AppInput = ({
   secureTextEntry = false,
   leftIcon: LeftIcon,
   rightIcon: RightIcon,
+  onRightIconPress,
   className,
   inputClassName,
 }: AppInputPropsType) => {
@@ -98,7 +100,13 @@ export const AppInput = ({
         />
 
         {RightIcon && (
-          <Icon as={RightIcon} size="lg" className="text-typography-500 ml-3" />
+          <Pressable onPress={onRightIconPress} hitSlop={8}>
+            <Icon
+              as={RightIcon}
+              size="lg"
+              className="text-typography-500 ml-3"
+            />
+          </Pressable>
         )}
       </View>
 

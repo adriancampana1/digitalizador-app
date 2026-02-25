@@ -1,84 +1,23 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { StatusBar } from 'react-native';
 
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
-import { FlatList } from 'react-native-gesture-handler';
+import { FlatList, RefreshControl } from 'react-native-gesture-handler';
 
 import { AppContainer } from '@/components/base/AppContainer';
 import { AppSpacer } from '@/components/base/AppSpacer';
 import { AppText } from '@/components/base/AppText';
 import DocumentCard from '@/components/shared/DocumentCard';
-import type { DocumentCardProps } from '@/components/shared/DocumentCard';
+import { useFindAllDocuments } from '@/features/document/hooks/useFindAllDocuments';
+import { useSearchDocuments } from '@/features/document/hooks/useSearchDocuments';
+import type {
+  DocumentResponse,
+  DocumentSearchResponse,
+} from '@/features/document/types';
+import { useDebounce } from '@/hooks';
 
 import Header from '../components/Header';
-
-const documentMockList: DocumentCardProps[] = [
-  {
-    fileName: 'Recibo de luz',
-    fileSize: '2.3 MB',
-    thumbnailUri:
-      'https://images.unsplash.com/photo-1631651693480-97f1132e333d?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTl8fGRvY3VtZW50fGVufDB8fDB8fHww',
-    provider: 'sharepoint',
-    uploadDate: '12 de setembro de 2024',
-    onDownload: () => undefined,
-    onViewOriginal: () => undefined,
-  },
-  {
-    fileName: 'Contrato de aluguel',
-    fileSize: '1.8 MB',
-    thumbnailUri:
-      'https://images.unsplash.com/photo-1518976024611-28bf4b48222e?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MzR8fGRvY3VtZW50fGVufDB8fDB8fHww',
-    provider: 'google_drive',
-    uploadDate: '5 de setembro de 2024',
-    onDownload: () => undefined,
-    onViewOriginal: () => undefined,
-  },
-  {
-    fileName: 'Nota fiscal - compra supermercado',
-    fileSize: '500 KB',
-    provider: 'onedrive',
-    uploadDate: '20 de agosto de 2024',
-    onDownload: () => undefined,
-    onViewOriginal: () => undefined,
-  },
-  {
-    fileName: 'Recibo de luz',
-    fileSize: '2.3 MB',
-    thumbnailUri:
-      'https://images.unsplash.com/photo-1631651693480-97f1132e333d?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTl8fGRvY3VtZW50fGVufDB8fDB8fHww',
-    provider: 'sharepoint',
-    uploadDate: '12 de setembro de 2024',
-    onDownload: () => undefined,
-    onViewOriginal: () => undefined,
-  },
-  {
-    fileName: 'Nota fiscal - compra supermercado',
-    fileSize: '500 KB',
-    provider: 'onedrive',
-    uploadDate: '20 de agosto de 2024',
-    onDownload: () => undefined,
-    onViewOriginal: () => undefined,
-  },
-  {
-    fileName: 'Contrato de aluguel',
-    fileSize: '1.8 MB',
-    thumbnailUri:
-      'https://images.unsplash.com/photo-1518976024611-28bf4b48222e?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MzR8fGRvY3VtZW50fGVufDB8fDB8fHww',
-    provider: 'google_drive',
-    uploadDate: '5 de setembro de 2024',
-    onDownload: () => undefined,
-    onViewOriginal: () => undefined,
-  },
-  {
-    fileName: 'Nota fiscal - compra supermercado',
-    fileSize: '500 KB',
-    provider: 'onedrive',
-    uploadDate: '20 de agosto de 2024',
-    onDownload: () => undefined,
-    onViewOriginal: () => undefined,
-  },
-];
 
 const ListHeaderComponent = () => (
   <AppContainer backgroundColor="background-light">
@@ -101,7 +40,18 @@ const ListHeaderComponent = () => (
 const renderDocumentListSeparator = () => <AppSpacer size="sm" />;
 
 const HomeScreen = () => {
+  const [searchText, setSearchText] = useState<string>('');
+  const debouncedSearch = useDebounce(searchText, 300);
   const tabBarHeight = useBottomTabBarHeight();
+
+  const isSearching = debouncedSearch.trim().length > 0;
+
+  const allDocuments = useFindAllDocuments();
+  const searchDocuments = useSearchDocuments(debouncedSearch);
+
+  const activeQuery = isSearching ? searchDocuments : allDocuments;
+  const documents: (DocumentResponse | DocumentSearchResponse)[] =
+    activeQuery.data ?? [];
 
   return (
     <AppContainer
@@ -111,15 +61,21 @@ const HomeScreen = () => {
       backgroundColor="background-light"
     >
       <StatusBar translucent />
-      <Header />
+      <Header searchText={searchText} onSearchChange={setSearchText} />
 
       <FlatList
-        data={documentMockList}
+        data={documents}
         renderItem={({ item }) => (
           <AppContainer paddingVertical="none">
-            <DocumentCard {...item} />
+            <DocumentCard document={item} />
           </AppContainer>
         )}
+        refreshControl={
+          <RefreshControl
+            refreshing={activeQuery.isLoading}
+            onRefresh={activeQuery.refetch}
+          />
+        }
         ListHeaderComponent={ListHeaderComponent}
         ItemSeparatorComponent={renderDocumentListSeparator}
         contentContainerStyle={{ paddingBottom: tabBarHeight + 40 }}

@@ -33,12 +33,9 @@ export interface FileMetadata {
  */
 export interface DocumentSearchResponse {
   id: string;
-  userId: string;
-  documentType: string;
   title: string;
-  extractedText: string;
+  documentType: string;
   fileMetadata: FileMetadata;
-  createdAt: string;
 }
 
 export interface CreateDocumentRequest {

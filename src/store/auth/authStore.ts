@@ -35,6 +35,20 @@ export const useAuthStore = create<AuthStore>()(set => ({
       throw error;
     }
   },
+  register: async (phone: string, name: string, password: string) => {
+    set({ isLoading: true });
+    try {
+      const { data } = await apiClient.post('/auth/register', {
+        phone,
+        name,
+        password,
+      });
+      await setAuthToken(data.accessToken);
+      set({ user: data.user, token: data.accessToken, isAuthenticated: true });
+    } finally {
+      set({ isLoading: false });
+    }
+  },
   logout: async () => {
     await clearAuthToken();
 

@@ -30,3 +30,18 @@ export { useAppNavigation } from './useAppNavigation';
  * Hook para carregar as fontes customizadas
  */
 export { useFonts, fontFamily } from './useFonts';
+
+/**
+ * Hook de debounce para componentes de pesquisa
+ */
+export { useDebounce } from './useDebounce';
+
+/**
+ * Hook de validação de formulários
+ */
+export { useFormValidation } from './useFormValidation';
+
+/**
+ * Hook para gerenciar máscaras em input de telefone
+ */
+export { usePhoneMask } from './usePhoneMask';

@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import { Pressable, View } from 'react-native';
 
 import { AppButton } from '@/components/base/AppButton';
@@ -6,18 +8,38 @@ import { AppInput } from '@/components/base/AppInput';
 import { AppSpacer } from '@/components/base/AppSpacer';
 import { AppText } from '@/components/base/AppText';
 import { Logo } from '@/components/Logo';
-import { ArrowRightIcon, EyeIcon } from '@/components/ui/icon';
-import { useAppNavigation } from '@/hooks';
+import { ArrowRightIcon, EyeIcon, EyeOffIcon } from '@/components/ui/icon';
+import { useAppNavigation, useAuth, usePhoneMask } from '@/hooks';
 
 const RegisterScreen = () => {
+  const { register, isLoading } = useAuth();
+
+  const { value: maskedPhone, rawValue: phone, applyMask } = usePhoneMask();
+  const [name, setName] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+
   const navigation = useAppNavigation();
+
+  const handleRegister = async () => {
+    try {
+      await register(phone, name, password);
+    } catch {
+      console.error('Erro ao registrar usuário');
+    }
+  };
 
   const handleNavigateToLogin = () => {
     navigation.goBack();
   };
 
   return (
-    <AppContainer flex justifyContent="space-between" className="bg-white">
+    <AppContainer
+      flex
+      justifyContent="space-between"
+      backgroundColor="background-light"
+      alignItems="stretch"
+    >
       <View className="absolute top-0 left-0 w-1/2 h-72 bg-typography-100 rounded-br-[120px] opacity-60" />
 
       <AppContainer
@@ -25,6 +47,8 @@ const RegisterScreen = () => {
         paddingHorizontal="none"
         flex
         justifyContent="center"
+        backgroundColor="background-light"
+        alignItems="stretch"
       >
         <Logo size="2xl" />
 
@@ -44,38 +68,42 @@ const RegisterScreen = () => {
           paddingVertical="none"
           direction="col"
           spacing="md"
+          backgroundColor="background-light"
         >
           <AppInput
             label="Telefone"
             placeholder="(99) 99999-9999"
-            value=""
-            onChangeText={() => {}}
+            value={maskedPhone}
+            onChangeText={applyMask}
             keyboardType="phone-pad"
           />
           <AppInput
             label="Nome"
             placeholder="Digite seu nome"
-            value=""
-            onChangeText={() => {}}
+            value={name}
+            onChangeText={setName}
             keyboardType="default"
           />
           <AppInput
             label="Senha"
             placeholder="••••••••"
-            value=""
-            onChangeText={() => {}}
-            secureTextEntry
-            rightIcon={EyeIcon}
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry={!showPassword}
+            rightIcon={showPassword ? EyeOffIcon : EyeIcon}
+            onRightIconPress={() => setShowPassword(!showPassword)}
           />
         </AppContainer>
 
-        <AppSpacer size="3xl" />
+        <AppSpacer size="sm" />
 
         <AppButton
           title="Cadastrar"
           fullWidth
-          onPress={() => {}}
+          onPress={handleRegister}
           rightIcon={ArrowRightIcon}
+          isLoading={isLoading}
+          isDisabled={isLoading}
           className="rounded-2xl shadow-md"
         />
       </AppContainer>
@@ -88,6 +116,7 @@ const RegisterScreen = () => {
         paddingHorizontal="none"
         spacing="xs"
         className="mb-6"
+        backgroundColor="background-light"
       >
         <AppText variant="bodySmall" className="text-typography-500">
           Já possui uma conta?

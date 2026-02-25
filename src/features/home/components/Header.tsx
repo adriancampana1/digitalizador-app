@@ -3,7 +3,12 @@ import { AppInput } from '@/components/base/AppInput';
 import { AppText } from '@/components/base/AppText';
 import { SearchIcon } from '@/components/ui/icon';
 
-const Header = () => {
+type HeaderProps = {
+  searchText: string;
+  onSearchChange: (text: string) => void;
+};
+
+const Header = ({ searchText, onSearchChange }: HeaderProps) => {
   return (
     <AppContainer
       backgroundColor="background-card"
@@ -17,10 +22,10 @@ const Header = () => {
         Adrian
       </AppText>
       <AppInput
-        value=""
+        value={searchText}
         placeholder="Pesquise pelo nome ou conteúdo"
         leftIcon={SearchIcon}
-        onChangeText={() => {}}
+        onChangeText={onSearchChange}
         className="mt-4"
       />
     </AppContainer>

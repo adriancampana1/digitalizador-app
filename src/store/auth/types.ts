@@ -9,6 +9,7 @@ export type AuthState = {
 
 export type AuthActions = {
   login: (phone: string, password: string) => Promise<void>;
+  register: (phone: string, name: string, password: string) => Promise<void>;
   logout: () => void;
   setUser: (user: User | null) => void;
 };

@@ -13,6 +13,7 @@ import {
 import { Feather } from '@expo/vector-icons';
 
 import { AppText } from '@/components/base/AppText';
+import type { DocumentResponse } from '@/features/document/types';
 import {
   getFileExtension,
   getFileTypeIconName,
@@ -23,12 +24,7 @@ import { colors } from '@/theme';
 import { AppCard } from '../base/AppCard';
 
 export type DocumentCardProps = {
-  fileName: string;
-  provider: string;
-  fileSize: string;
-  uploadDate: string;
-  thumbnailUri?: string;
-  mimeType?: string;
+  document: DocumentResponse;
   onViewOriginal?: () => void;
   onDownload?: () => void;
   onPress?: () => void;
@@ -44,13 +40,11 @@ type MenuAction = {
 };
 
 const DocumentThumbnail = ({
-  thumbnailUri,
-  mimeType,
-  fileName,
-}: Pick<DocumentCardProps, 'thumbnailUri' | 'mimeType' | 'fileName'>) => {
-  const extension = getFileExtension(fileName);
+  document: { storageUrl: thumbnailUri, title },
+}: Pick<DocumentCardProps, 'document'>) => {
+  const extension = getFileExtension(title);
   const iconName = getFileTypeIconName(
-    mimeType
+    'application/pdf'
   ) as keyof typeof Feather.glyphMap;
 
   if (thumbnailUri) {
@@ -59,7 +53,7 @@ const DocumentThumbnail = ({
         source={{ uri: thumbnailUri }}
         style={styles.thumbnailImage}
         resizeMode="cover"
-        accessibilityLabel={`Miniatura de ${fileName}`}
+        accessibilityLabel={`Miniatura de ${title}`}
       />
     );
   }
@@ -89,12 +83,7 @@ const ProviderBadge = ({ provider }: { provider: string }) => {
 };
 
 const DocumentCard = ({
-  fileName,
-  provider,
-  fileSize,
-  uploadDate,
-  thumbnailUri,
-  mimeType,
+  document,
   onViewOriginal,
   onDownload,
   onPress,
@@ -156,30 +145,19 @@ const DocumentCard = ({
         className="w-full shadow-sm bg-background-card"
       >
         <View className="flex-row items-center gap-3">
-          <DocumentThumbnail
-            thumbnailUri={thumbnailUri}
-            mimeType={mimeType}
-            fileName={fileName}
-          />
+          <DocumentThumbnail document={document} />
 
           <View className="flex-1 gap-1">
             <AppText variant="bodySmall" bold numberOfLines={1} color="default">
-              {fileName}
+              {document.title}
             </AppText>
 
             <View className="flex-row items-center gap-2">
-              <ProviderBadge provider={provider} />
+              <ProviderBadge provider={document.storageProvider} />
               <AppText variant="caption" color="muted">
                 ·
               </AppText>
-              <AppText variant="caption" color="muted">
-                {fileSize}
-              </AppText>
             </View>
-
-            <AppText variant="caption" color="muted">
-              {uploadDate}
-            </AppText>
           </View>
 
           {hasMenuActions && (
