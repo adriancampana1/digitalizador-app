@@ -14,28 +14,21 @@ export enum StorageProvider {
 export interface DocumentResponse {
   id: string;
   userId: string;
-  documentType: string;
   title: string;
+  documentType: string;
   storageProvider: string;
   storageUrl: string | null;
   storageItemId: string;
   folderPath: string | null;
+  fileMetadata: FileMetadata;
+  thumbnailUrl: string | null;
+  createdAt: string;
 }
 
 export interface FileMetadata {
   mimeType: string;
   fileSize: number;
   originalFileName: string;
-}
-
-/**
- * Representa o documento indexado no Elasticsearch
- */
-export interface DocumentSearchResponse {
-  id: string;
-  title: string;
-  documentType: string;
-  fileMetadata: FileMetadata;
 }
 
 export interface CreateDocumentRequest {
@@ -65,9 +58,13 @@ export interface DocumentHttpServiceType {
     request: CreateDocumentRequest
   ): Promise<ApiResponse<DocumentResponse> | ApiError>;
 
+  refreshThumbnail(
+    documentId: string
+  ): Promise<ApiResponse<DocumentResponse> | ApiError>;
+
   searchDocuments(
     request: DocumentSearchRequest
-  ): Promise<ApiResponse<DocumentSearchResponse[]> | ApiError>;
+  ): Promise<ApiResponse<DocumentResponse[]> | ApiError>;
 
   findAllDocuments(): Promise<ApiResponse<DocumentResponse[]> | ApiError>;
 

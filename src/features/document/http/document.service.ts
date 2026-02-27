@@ -3,7 +3,7 @@ import documentMockService from './document.mock.service';
 
 import type { DocumentHttpServiceType } from '../types';
 
-const isMockEnabled = true;
+const isMockEnabled = false;
 
 const documentService: DocumentHttpServiceType = isMockEnabled
   ? documentMockService

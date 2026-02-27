@@ -11,10 +11,13 @@ import {
 } from 'react-native';
 
 import { Feather } from '@expo/vector-icons';
+import { format, parseISO } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 import { AppText } from '@/components/base/AppText';
 import type { DocumentResponse } from '@/features/document/types';
 import {
+  formatFileSize,
   getFileExtension,
   getFileTypeIconName,
   getProviderConfig,
@@ -28,6 +31,7 @@ export type DocumentCardProps = {
   onViewOriginal?: () => void;
   onDownload?: () => void;
   onPress?: () => void;
+  onThumbnailRefresh?: (id: string) => void;
 };
 
 const THUMBNAIL_WIDTH = 56;
@@ -40,20 +44,32 @@ type MenuAction = {
 };
 
 const DocumentThumbnail = ({
-  document: { storageUrl: thumbnailUri, title },
-}: Pick<DocumentCardProps, 'document'>) => {
-  const extension = getFileExtension(title);
-  const iconName = getFileTypeIconName(
-    'application/pdf'
-  ) as keyof typeof Feather.glyphMap;
+  document: { id, thumbnailUrl, title, fileMetadata },
+  onThumbnailRefresh,
+}: Pick<DocumentCardProps, 'document'> & {
+  onThumbnailRefresh?: (id: string) => void;
+}) => {
+  const [imageError, setImageError] = useState(false);
 
-  if (thumbnailUri) {
+  const mimeType = fileMetadata?.mimeType ?? 'application/octet-stream';
+  const iconName = getFileTypeIconName(
+    mimeType
+  ) as keyof typeof Feather.glyphMap;
+  const extension = getFileExtension(title);
+
+  const handleImageError = useCallback(() => {
+    setImageError(true);
+    onThumbnailRefresh?.(id);
+  }, [id, onThumbnailRefresh]);
+
+  if (thumbnailUrl && !imageError) {
     return (
       <Image
-        source={{ uri: thumbnailUri }}
+        source={{ uri: thumbnailUrl }}
         style={styles.thumbnailImage}
         resizeMode="cover"
         accessibilityLabel={`Miniatura de ${title}`}
+        onError={handleImageError}
       />
     );
   }
@@ -87,6 +103,7 @@ const DocumentCard = ({
   onViewOriginal,
   onDownload,
   onPress,
+  onThumbnailRefresh,
 }: DocumentCardProps) => {
   const [menuVisible, setMenuVisible] = useState(false);
   const [menuPosition, setMenuPosition] = useState({ top: 0, right: 0 });
@@ -145,7 +162,10 @@ const DocumentCard = ({
         className="w-full shadow-sm bg-background-card"
       >
         <View className="flex-row items-center gap-3">
-          <DocumentThumbnail document={document} />
+          <DocumentThumbnail
+            document={document}
+            onThumbnailRefresh={onThumbnailRefresh}
+          />
 
           <View className="flex-1 gap-1">
             <AppText variant="bodySmall" bold numberOfLines={1} color="default">
@@ -157,7 +177,21 @@ const DocumentCard = ({
               <AppText variant="caption" color="muted">
                 ·
               </AppText>
+              <AppText variant="caption" color="muted">
+                {document.fileMetadata?.fileSize
+                  ? formatFileSize(document.fileMetadata.fileSize)
+                  : 'Tamanho desconhecido'}
+              </AppText>
             </View>
+            <AppText variant="caption" color="muted">
+              {document.createdAt
+                ? format(
+                    parseISO(document.createdAt),
+                    "dd 'de' MMM. 'de' yyyy",
+                    { locale: ptBR }
+                  )
+                : 'Data desconhecida'}
+            </AppText>
           </View>
 
           {hasMenuActions && (

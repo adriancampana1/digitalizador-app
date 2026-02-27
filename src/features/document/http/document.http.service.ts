@@ -8,7 +8,6 @@ import type {
   DocumentHttpServiceType,
   DocumentResponse,
   DocumentSearchRequest,
-  DocumentSearchResponse,
 } from '../types';
 
 class DocumentHttpService implements DocumentHttpServiceType {
@@ -24,12 +23,18 @@ class DocumentHttpService implements DocumentHttpServiceType {
     });
   }
 
+  async refreshThumbnail(
+    documentId: string
+  ): Promise<ApiResponse<DocumentResponse> | ApiError> {
+    return apiClient.post(`/document/${documentId}/refresh-thumbnail`);
+  }
+
   /**
    * Busca documentos por texto no Elasticsearch
    */
   async searchDocuments(
     request: DocumentSearchRequest
-  ): Promise<ApiResponse<DocumentSearchResponse[]> | ApiError> {
+  ): Promise<ApiResponse<DocumentResponse[]> | ApiError> {
     return apiClient.get('/document/search', {
       params: {
         searchText: request.searchText,

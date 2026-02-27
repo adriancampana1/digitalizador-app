@@ -7,7 +7,6 @@ import type {
   DocumentHttpServiceType,
   DocumentResponse,
   DocumentSearchRequest,
-  DocumentSearchResponse,
 } from '../types';
 
 class DocumentMockService implements DocumentHttpServiceType {
@@ -20,12 +19,21 @@ class DocumentMockService implements DocumentHttpServiceType {
     } as ApiResponse<DocumentResponse>;
   }
 
+  async refreshThumbnail(
+    _documentId: string
+  ): Promise<ApiResponse<DocumentResponse> | ApiError> {
+    return {
+      data: findAllDocumentsMock[0],
+      status: 200,
+    } as ApiResponse<DocumentResponse>;
+  }
+
   /**
    * Busca documentos por texto no Elasticsearch
    */
   async searchDocuments(
     _request: DocumentSearchRequest
-  ): Promise<ApiResponse<DocumentSearchResponse[]> | ApiError> {
+  ): Promise<ApiResponse<DocumentResponse[]> | ApiError> {
     return { data: searchDocumentsMock, status: 200 };
   }
 

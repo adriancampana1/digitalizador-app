@@ -4,14 +4,14 @@ import { isApiError } from '@/utils/api';
 
 import documentService from '../http/document.service';
 
-import type { DocumentSearchResponse } from '../types';
+import type { DocumentResponse } from '../types';
 
 export const searchDocumentKeys = {
   byText: (searchText: string) => ['documents', 'search', searchText] as const,
 };
 
 export function useSearchDocuments(searchText: string) {
-  return useQuery<DocumentSearchResponse[]>({
+  return useQuery<DocumentResponse[]>({
     queryKey: searchDocumentKeys.byText(searchText),
     queryFn: async () => {
       const response = await documentService.searchDocuments({ searchText });

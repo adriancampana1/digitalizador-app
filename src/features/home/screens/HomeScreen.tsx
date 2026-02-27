@@ -10,11 +10,9 @@ import { AppSpacer } from '@/components/base/AppSpacer';
 import { AppText } from '@/components/base/AppText';
 import DocumentCard from '@/components/shared/DocumentCard';
 import { useFindAllDocuments } from '@/features/document/hooks/useFindAllDocuments';
+import { useRefreshThumbnail } from '@/features/document/hooks/useRefreshThumbnail';
 import { useSearchDocuments } from '@/features/document/hooks/useSearchDocuments';
-import type {
-  DocumentResponse,
-  DocumentSearchResponse,
-} from '@/features/document/types';
+import type { DocumentResponse } from '@/features/document/types';
 import { useDebounce } from '@/hooks';
 
 import Header from '../components/Header';
@@ -48,10 +46,10 @@ const HomeScreen = () => {
 
   const allDocuments = useFindAllDocuments();
   const searchDocuments = useSearchDocuments(debouncedSearch);
+  const refreshThumbnail = useRefreshThumbnail();
 
   const activeQuery = isSearching ? searchDocuments : allDocuments;
-  const documents: (DocumentResponse | DocumentSearchResponse)[] =
-    activeQuery.data ?? [];
+  const documents: DocumentResponse[] = activeQuery.data ?? [];
 
   return (
     <AppContainer
@@ -67,7 +65,10 @@ const HomeScreen = () => {
         data={documents}
         renderItem={({ item }) => (
           <AppContainer paddingVertical="none">
-            <DocumentCard document={item} />
+            <DocumentCard
+              document={item}
+              onThumbnailRefresh={refreshThumbnail}
+            />
           </AppContainer>
         )}
         refreshControl={
