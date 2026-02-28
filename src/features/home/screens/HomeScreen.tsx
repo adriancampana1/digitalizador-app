@@ -9,6 +9,7 @@ import { AppContainer } from '@/components/base/AppContainer';
 import { AppSpacer } from '@/components/base/AppSpacer';
 import { AppText } from '@/components/base/AppText';
 import DocumentCard from '@/components/shared/DocumentCard';
+import { useDownloadDocument } from '@/features/document/hooks/useDownloadDocument';
 import { useFindAllDocuments } from '@/features/document/hooks/useFindAllDocuments';
 import { useRefreshThumbnail } from '@/features/document/hooks/useRefreshThumbnail';
 import { useSearchDocuments } from '@/features/document/hooks/useSearchDocuments';
@@ -49,6 +50,7 @@ const HomeScreen = () => {
   const searchDocuments = useSearchDocuments(debouncedSearch);
   const refreshThumbnail = useRefreshThumbnail();
   const viewOriginal = useViewOriginal();
+  const { download, downloadingId } = useDownloadDocument();
 
   const activeQuery = isSearching ? searchDocuments : allDocuments;
   const documents: DocumentResponse[] = activeQuery.data ?? [];
@@ -71,6 +73,13 @@ const HomeScreen = () => {
               document={item}
               onThumbnailRefresh={refreshThumbnail}
               onViewOriginal={() => viewOriginal(item.storageUrl)}
+              onDownload={() =>
+                download(
+                  item.id,
+                  item.fileMetadata?.originalFileName ?? item.title
+                )
+              }
+              isDownloading={downloadingId === item.id}
             />
           </AppContainer>
         )}

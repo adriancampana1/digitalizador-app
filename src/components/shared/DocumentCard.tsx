@@ -32,6 +32,7 @@ export type DocumentCardProps = {
   onDownload?: () => void;
   onPress?: () => void;
   onThumbnailRefresh?: (id: string) => void;
+  isDownloading?: boolean;
 };
 
 const THUMBNAIL_WIDTH = 56;
@@ -41,6 +42,7 @@ type MenuAction = {
   icon: keyof typeof Feather.glyphMap;
   label: string;
   onPress: () => void;
+  disabled?: boolean;
 };
 
 const DocumentThumbnail = ({
@@ -104,6 +106,7 @@ const DocumentCard = ({
   onDownload,
   onPress,
   onThumbnailRefresh,
+  isDownloading,
 }: DocumentCardProps) => {
   const [menuVisible, setMenuVisible] = useState(false);
   const [menuPosition, setMenuPosition] = useState({ top: 0, right: 0 });
@@ -143,9 +146,10 @@ const DocumentCard = ({
     ...(onDownload
       ? [
           {
-            icon: 'download' as const,
-            label: 'Fazer download',
-            onPress: () => handleMenuAction(onDownload),
+            icon: isDownloading ? ('loader' as const) : ('download' as const),
+            label: isDownloading ? 'Baixando...' : 'Fazer download',
+            onPress: () => !isDownloading && handleMenuAction(onDownload),
+            disabled: isDownloading,
           },
         ]
       : []),
@@ -233,9 +237,14 @@ const DocumentCard = ({
                 <Pressable
                   key={action.label}
                   onPress={action.onPress}
+                  disabled={action.disabled}
                   className="flex-row items-center gap-3 px-4 py-3"
                   style={({ pressed }) => ({
-                    backgroundColor: pressed ? colors.gray[50] : 'transparent',
+                    backgroundColor:
+                      pressed && !action.disabled
+                        ? colors.gray[50]
+                        : 'transparent',
+                    opacity: action.disabled ? 0.5 : 1,
                   })}
                 >
                   <Feather
