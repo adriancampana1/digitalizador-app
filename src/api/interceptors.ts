@@ -2,6 +2,7 @@ import * as SecureStore from 'expo-secure-store';
 
 import type { AuthResponse, User } from '@/features/auth/types';
 
+import { triggerLogout } from './authCallback';
 import {
   AUTH_TOKEN_KEY,
   AUTH_USER_KEY,
@@ -95,7 +96,8 @@ async function handleResponseError(error: AxiosError): Promise<never> {
   });
 
   if (status === 401) {
-    await clearAuthToken();
+    // callback para não dar dependency cycle com o authStore
+    await triggerLogout();
   }
 
   const apiError: ApiError = createApiError(extractErrorMessage(data), status);

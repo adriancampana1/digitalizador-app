@@ -1,13 +1,13 @@
 import type { ApiError, ApiResponse } from '@/api';
 import { apiClient } from '@/api';
 
-import type { AuthHttpServicePropsType, User } from '../types';
+import type { AuthHttpServicePropsType, AuthResponse, User } from '../types';
 
 class AuthHttpService implements AuthHttpServicePropsType {
   async login(
     phone: string,
     password: string
-  ): Promise<ApiResponse<User> | ApiError> {
+  ): Promise<ApiResponse<AuthResponse> | ApiError> {
     return apiClient.post('/auth/login', {
       phone,
       password,

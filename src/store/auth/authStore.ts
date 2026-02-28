@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 
 import { apiClient, clearAuthToken, setAuthToken } from '@/api';
+import { registerLogoutCallback } from '@/api/authCallback';
 import {
   clearAuthUser,
   getAuthToken,
@@ -70,3 +71,6 @@ export const useAuthStore = create<AuthStore>()(set => ({
     set({ user: null, token: null, isAuthenticated: false });
   },
 }));
+
+// Registrar o callback de logout para evitar ciclos de dependência com o authStore
+registerLogoutCallback(useAuthStore.getState().logout as () => Promise<void>);
