@@ -8,9 +8,6 @@ export enum StorageProvider {
   LOCAL = 'local',
 }
 
-/**
- * Representa a resposta de um documento armazenado internamente
- */
 export interface DocumentResponse {
   id: string;
   userId: string;

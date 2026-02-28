@@ -15,7 +15,9 @@ export function useSearchDocuments(searchText: string) {
     queryKey: searchDocumentKeys.byText(searchText),
     queryFn: async () => {
       const response = await documentService.searchDocuments({ searchText });
+
       if (isApiError(response)) throw new Error(response.message);
+
       return response.data;
     },
     enabled: searchText.trim().length > 0,

@@ -12,6 +12,7 @@ import DocumentCard from '@/components/shared/DocumentCard';
 import { useFindAllDocuments } from '@/features/document/hooks/useFindAllDocuments';
 import { useRefreshThumbnail } from '@/features/document/hooks/useRefreshThumbnail';
 import { useSearchDocuments } from '@/features/document/hooks/useSearchDocuments';
+import { useViewOriginal } from '@/features/document/hooks/useViewOriginal';
 import type { DocumentResponse } from '@/features/document/types';
 import { useDebounce } from '@/hooks';
 
@@ -47,6 +48,7 @@ const HomeScreen = () => {
   const allDocuments = useFindAllDocuments();
   const searchDocuments = useSearchDocuments(debouncedSearch);
   const refreshThumbnail = useRefreshThumbnail();
+  const viewOriginal = useViewOriginal();
 
   const activeQuery = isSearching ? searchDocuments : allDocuments;
   const documents: DocumentResponse[] = activeQuery.data ?? [];
@@ -68,6 +70,7 @@ const HomeScreen = () => {
             <DocumentCard
               document={item}
               onThumbnailRefresh={refreshThumbnail}
+              onViewOriginal={() => viewOriginal(item.storageUrl)}
             />
           </AppContainer>
         )}
