@@ -1,5 +1,13 @@
 import type { ApiError, ApiResponse } from '@/api';
 
+export interface AuthResponse {
+  accessToken: string;
+  name: string;
+  phone: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface User {
   id: string;
   phone: string;
@@ -11,7 +19,10 @@ export interface User {
 }
 
 export interface AuthHttpServicePropsType {
-  login(phone: string, password: string): Promise<ApiResponse<User> | ApiError>;
+  login(
+    phone: string,
+    password: string
+  ): Promise<ApiResponse<AuthResponse> | ApiError>;
   register(
     phone: string,
     password: string,

@@ -1,3 +1,5 @@
+import { env } from '@/configs/env';
+
 export interface ApiError {
   message: string;
   status: number;
@@ -8,7 +10,8 @@ export interface ApiResponse<T> {
   message?: string;
 }
 
-export const AUTH_TOKEN_KEY = 'auth_token';
+export const AUTH_TOKEN_KEY = env.AUTH_TOKEN_KEY;
+export const AUTH_USER_KEY = env.AUTH_USER_KEY;
 
 export function isApiError(error: unknown): error is ApiError {
   return (

@@ -1,6 +1,9 @@
+/* eslint-disable react-native/no-inline-styles */
 import { useState } from 'react';
 
-import { Pressable, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, Pressable, View } from 'react-native';
+
+import { ScrollView } from 'react-native-gesture-handler';
 
 import { AppButton } from '@/components/base/AppButton';
 import { AppContainer } from '@/components/base/AppContainer';
@@ -41,91 +44,102 @@ const LoginScreen = () => {
     return login(phone, password);
   };
   return (
-    <AppContainer
-      flex
-      justifyContent="space-between"
-      className="bg-background-light"
-      alignItems="stretch"
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <View className="absolute top-0 right-0 w-1/2 h-72 bg-typography-100 rounded-bl-[120px] opacity-60" />
-
-      <AppContainer
-        paddingVertical="none"
-        paddingHorizontal="none"
-        flex
-        justifyContent="center"
-        backgroundColor="background-light"
-        alignItems="stretch"
+      <ScrollView
+        contentContainerClassName="flex-grow"
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
       >
-        <Logo size="2xl" />
-
-        <AppText variant="h1" className="text-primary-500 leading-tight">
-          Digitalizador
-        </AppText>
-        <AppSpacer size="xs" />
-
-        <AppText variant="body">
-          Digitalize seus documentos com precisão e praticidade.
-        </AppText>
-
-        <AppSpacer size="3xl" />
-
         <AppContainer
-          paddingHorizontal="none"
-          paddingVertical="none"
-          direction="col"
-          spacing="md"
+          flex
+          justifyContent="space-between"
+          className="bg-background-light"
+          alignItems="stretch"
         >
-          <AppInput
-            label="Telefone"
-            placeholder="(99) 99999-9999"
-            value={maskedPhone}
-            onChangeText={applyMask}
-            keyboardType="phone-pad"
-          />
-          <AppInput
-            label="Senha"
-            placeholder="••••••••"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry={!showPassword}
-            rightIcon={showPassword ? EyeOffIcon : EyeIcon}
-            onRightIconPress={() => setShowPassword(!showPassword)}
-          />
+          <View className="absolute top-0 right-0 w-1/2 h-72 bg-typography-100 rounded-bl-[120px] opacity-60" />
+
+          <AppContainer
+            paddingVertical="none"
+            paddingHorizontal="none"
+            flex
+            justifyContent="center"
+            backgroundColor="background-light"
+            alignItems="stretch"
+          >
+            <Logo size="2xl" />
+
+            <AppText variant="h1" className="text-primary-500 leading-tight">
+              Digitalizador
+            </AppText>
+            <AppSpacer size="xs" />
+
+            <AppText variant="body">
+              Digitalize seus documentos com precisão e praticidade.
+            </AppText>
+
+            <AppSpacer size="3xl" />
+
+            <AppContainer
+              paddingHorizontal="none"
+              paddingVertical="none"
+              direction="col"
+              spacing="md"
+            >
+              <AppInput
+                label="Telefone"
+                placeholder="(99) 99999-9999"
+                value={maskedPhone}
+                onChangeText={applyMask}
+                keyboardType="phone-pad"
+              />
+              <AppInput
+                label="Senha"
+                placeholder="••••••••"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry={!showPassword}
+                rightIcon={showPassword ? EyeOffIcon : EyeIcon}
+                onRightIconPress={() => setShowPassword(!showPassword)}
+              />
+            </AppContainer>
+
+            <AppSpacer size="sm" />
+
+            <AppButton
+              title="Entrar"
+              fullWidth
+              onPress={handleLogin}
+              rightIcon={ArrowRightIcon}
+              className="rounded-2xl shadow-md"
+              isDisabled={isLoading}
+              isLoading={isLoading}
+            />
+          </AppContainer>
+
+          <AppContainer
+            alignItems="center"
+            justifyContent="center"
+            direction="row"
+            wrap
+            paddingHorizontal="none"
+            spacing="xs"
+            className="mb-6"
+          >
+            <AppText variant="bodySmall" className="text-typography-500">
+              {'Não tem uma conta?'}
+            </AppText>
+            <Pressable onPress={handleNavigateToRegister}>
+              <AppText variant="button" className="text-primary-500 underline">
+                Cadastre-se aqui
+              </AppText>
+            </Pressable>
+          </AppContainer>
         </AppContainer>
-
-        <AppSpacer size="sm" />
-
-        <AppButton
-          title="Entrar"
-          fullWidth
-          onPress={handleLogin}
-          rightIcon={ArrowRightIcon}
-          className="rounded-2xl shadow-md"
-          isDisabled={isLoading}
-          isLoading={isLoading}
-        />
-      </AppContainer>
-
-      <AppContainer
-        alignItems="center"
-        justifyContent="center"
-        direction="row"
-        wrap
-        paddingHorizontal="none"
-        spacing="xs"
-        className="mb-6"
-      >
-        <AppText variant="bodySmall" className="text-typography-500">
-          {'Não tem uma conta?'}
-        </AppText>
-        <Pressable onPress={handleNavigateToRegister}>
-          <AppText variant="button" className="text-primary-500 underline">
-            Cadastre-se aqui
-          </AppText>
-        </Pressable>
-      </AppContainer>
-    </AppContainer>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 

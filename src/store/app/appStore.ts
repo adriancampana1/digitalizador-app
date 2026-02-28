@@ -1,6 +1,8 @@
 import * as SecureStore from 'expo-secure-store';
 import { create } from 'zustand';
 
+import { useAuthStore } from '@/store/auth/authStore';
+
 import type { AppStore } from './types';
 
 const FIRST_LAUNCH_KEY = 'first_launch';
@@ -23,6 +25,8 @@ export const useAppStore = create<AppStore>()(set => ({
       } else {
         set({ isFirstLaunch: false });
       }
+
+      await useAuthStore.getState().rehydrate();
     } catch {
       set({ isFirstLaunch: false });
     }

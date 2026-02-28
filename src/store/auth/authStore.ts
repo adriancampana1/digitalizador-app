@@ -1,7 +1,12 @@
 import { create } from 'zustand';
 
 import { apiClient, clearAuthToken, setAuthToken } from '@/api';
-import type { User } from '@/features/auth/types';
+import {
+  clearAuthUser,
+  getAuthToken,
+  getAuthUser,
+  setAuthUser,
+} from '@/api/interceptors';
 
 import type { AuthStore } from './types';
 
@@ -11,21 +16,27 @@ export const useAuthStore = create<AuthStore>()(set => ({
   isAuthenticated: false,
   token: null,
 
-  login: async (phone: string, password: string) => {
-    set({ isLoading: true });
-
+  rehydrate: async () => {
     try {
-      const response = await apiClient.post('/auth/login', {
-        phone,
-        password,
-      });
+      const [token, user] = await Promise.all([getAuthToken(), getAuthUser()]);
+      if (token && user) {
+        set({ token, user, isAuthenticated: true });
+      }
+    } catch {
+      await Promise.all([clearAuthToken(), clearAuthUser()]);
+      set({ token: null, user: null, isAuthenticated: false });
+    }
+  },
 
-      const { user, accessToken } = response.data;
+  login: async (phone, password) => {
+    set({ isLoading: true });
+    try {
+      const { data } = await apiClient.post('/auth/login', { phone, password });
 
-      await setAuthToken(accessToken);
-
+      const { accessToken } = data;
+      await Promise.all([setAuthToken(accessToken), setAuthUser(data)]);
       set({
-        user,
+        user: data,
         token: accessToken,
         isAuthenticated: true,
         isLoading: false,
@@ -35,7 +46,8 @@ export const useAuthStore = create<AuthStore>()(set => ({
       throw error;
     }
   },
-  register: async (phone: string, name: string, password: string) => {
+
+  register: async (phone, name, password) => {
     set({ isLoading: true });
     try {
       const { data } = await apiClient.post('/auth/register', {
@@ -43,22 +55,18 @@ export const useAuthStore = create<AuthStore>()(set => ({
         name,
         password,
       });
-      await setAuthToken(data.accessToken);
+      await Promise.all([
+        setAuthToken(data.accessToken),
+        setAuthUser(data.user),
+      ]);
       set({ user: data.user, token: data.accessToken, isAuthenticated: true });
     } finally {
       set({ isLoading: false });
     }
   },
-  logout: async () => {
-    await clearAuthToken();
 
-    set({
-      user: null,
-      token: null,
-      isAuthenticated: false,
-    });
-  },
-  setUser: (user: User | null) => {
-    set({ user });
+  logout: async () => {
+    await Promise.all([clearAuthToken(), clearAuthUser()]);
+    set({ user: null, token: null, isAuthenticated: false });
   },
 }));

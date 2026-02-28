@@ -1,6 +1,13 @@
 import * as SecureStore from 'expo-secure-store';
 
-import { AUTH_TOKEN_KEY, createApiError, type ApiError } from './types';
+import type { AuthResponse, User } from '@/features/auth/types';
+
+import {
+  AUTH_TOKEN_KEY,
+  AUTH_USER_KEY,
+  createApiError,
+  type ApiError,
+} from './types';
 
 import type {
   AxiosError,
@@ -8,7 +15,7 @@ import type {
   InternalAxiosRequestConfig,
 } from 'axios';
 
-async function getAuthToken(): Promise<string | null> {
+export async function getAuthToken(): Promise<string | null> {
   try {
     return await SecureStore.getItemAsync(AUTH_TOKEN_KEY);
   } catch {
@@ -27,7 +34,6 @@ export async function clearAuthToken(): Promise<void> {
 export async function setAuthToken(token: string): Promise<void> {
   await SecureStore.setItemAsync(AUTH_TOKEN_KEY, token);
 }
-
 async function handleRequestInterceptor(
   config: InternalAxiosRequestConfig
 ): Promise<InternalAxiosRequestConfig> {
@@ -38,6 +44,27 @@ async function handleRequestInterceptor(
   }
 
   return config;
+}
+
+export async function getAuthUser(): Promise<User | null> {
+  try {
+    const raw = await SecureStore.getItemAsync(AUTH_USER_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
+export async function setAuthUser(user: AuthResponse): Promise<void> {
+  const serialized = JSON.stringify(user);
+  await SecureStore.setItemAsync(AUTH_USER_KEY, serialized);
+}
+export async function clearAuthUser(): Promise<void> {
+  try {
+    await SecureStore.deleteItemAsync(AUTH_USER_KEY);
+  } catch {
+    //
+  }
 }
 
 function handleRequestError(error: AxiosError): Promise<never> {

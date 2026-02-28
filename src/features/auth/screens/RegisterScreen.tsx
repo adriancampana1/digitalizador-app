@@ -1,6 +1,9 @@
+/* eslint-disable react-native/no-inline-styles */
 import { useState } from 'react';
 
-import { Pressable, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, Pressable, View } from 'react-native';
+
+import { ScrollView } from 'react-native-gesture-handler';
 
 import { AppButton } from '@/components/base/AppButton';
 import { AppContainer } from '@/components/base/AppContainer';
@@ -40,100 +43,111 @@ const RegisterScreen = () => {
   };
 
   return (
-    <AppContainer
-      flex
-      justifyContent="space-between"
-      backgroundColor="background-light"
-      alignItems="stretch"
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <View className="absolute top-0 left-0 w-1/2 h-72 bg-typography-100 rounded-br-[120px] opacity-60" />
-
-      <AppContainer
-        paddingVertical="none"
-        paddingHorizontal="none"
-        flex
-        justifyContent="center"
-        backgroundColor="background-light"
-        alignItems="stretch"
+      <ScrollView
+        contentContainerClassName="flex-grow"
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
       >
-        <Logo size="2xl" />
-
-        <AppText variant="h1" className="text-primary-500 leading-tight">
-          Criar conta
-        </AppText>
-        <AppSpacer size="xs" />
-
-        <AppText variant="body">
-          Preencha os dados para começar a digitalizar seus documentos.
-        </AppText>
-
-        <AppSpacer size="3xl" />
-
         <AppContainer
-          paddingHorizontal="none"
-          paddingVertical="none"
-          direction="col"
-          spacing="md"
+          flex
+          justifyContent="space-between"
           backgroundColor="background-light"
+          alignItems="stretch"
         >
-          <AppInput
-            label="Telefone"
-            placeholder="(99) 99999-9999"
-            value={maskedPhone}
-            onChangeText={applyMask}
-            keyboardType="phone-pad"
-          />
-          <AppInput
-            label="Nome"
-            placeholder="Digite seu nome"
-            value={name}
-            onChangeText={setName}
-            keyboardType="default"
-          />
-          <AppInput
-            label="Senha"
-            placeholder="••••••••"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry={!showPassword}
-            rightIcon={showPassword ? EyeOffIcon : EyeIcon}
-            onRightIconPress={() => setShowPassword(!showPassword)}
-          />
+          <View className="absolute top-0 left-0 w-1/2 h-72 bg-typography-100 rounded-br-[120px] opacity-60" />
+
+          <AppContainer
+            paddingVertical="none"
+            paddingHorizontal="none"
+            flex
+            justifyContent="center"
+            backgroundColor="background-light"
+            alignItems="stretch"
+          >
+            <Logo size="2xl" />
+
+            <AppText variant="h1" className="text-primary-500 leading-tight">
+              Criar conta
+            </AppText>
+            <AppSpacer size="xs" />
+
+            <AppText variant="body">
+              Preencha os dados para começar a digitalizar seus documentos.
+            </AppText>
+
+            <AppSpacer size="3xl" />
+
+            <AppContainer
+              paddingHorizontal="none"
+              paddingVertical="none"
+              direction="col"
+              spacing="md"
+              backgroundColor="background-light"
+            >
+              <AppInput
+                label="Telefone"
+                placeholder="(99) 99999-9999"
+                value={maskedPhone}
+                onChangeText={applyMask}
+                keyboardType="phone-pad"
+              />
+              <AppInput
+                label="Nome"
+                placeholder="Digite seu nome"
+                value={name}
+                onChangeText={setName}
+                keyboardType="default"
+              />
+              <AppInput
+                label="Senha"
+                placeholder="••••••••"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry={!showPassword}
+                rightIcon={showPassword ? EyeOffIcon : EyeIcon}
+                onRightIconPress={() => setShowPassword(!showPassword)}
+              />
+            </AppContainer>
+
+            <AppSpacer size="sm" />
+
+            <AppButton
+              title="Cadastrar"
+              fullWidth
+              onPress={handleRegister}
+              rightIcon={ArrowRightIcon}
+              isLoading={isLoading}
+              isDisabled={isLoading}
+              className="rounded-2xl shadow-md"
+            />
+          </AppContainer>
+
+          <AppContainer
+            alignItems="center"
+            justifyContent="center"
+            direction="row"
+            wrap
+            paddingHorizontal="none"
+            spacing="xs"
+            className="mb-6"
+            backgroundColor="background-light"
+          >
+            <AppText variant="bodySmall" className="text-typography-500">
+              Já possui uma conta?
+            </AppText>
+            <Pressable onPress={handleNavigateToLogin}>
+              <AppText variant="button" className="text-primary-500 underline">
+                Entrar
+              </AppText>
+            </Pressable>
+          </AppContainer>
         </AppContainer>
-
-        <AppSpacer size="sm" />
-
-        <AppButton
-          title="Cadastrar"
-          fullWidth
-          onPress={handleRegister}
-          rightIcon={ArrowRightIcon}
-          isLoading={isLoading}
-          isDisabled={isLoading}
-          className="rounded-2xl shadow-md"
-        />
-      </AppContainer>
-
-      <AppContainer
-        alignItems="center"
-        justifyContent="center"
-        direction="row"
-        wrap
-        paddingHorizontal="none"
-        spacing="xs"
-        className="mb-6"
-        backgroundColor="background-light"
-      >
-        <AppText variant="bodySmall" className="text-typography-500">
-          Já possui uma conta?
-        </AppText>
-        <Pressable onPress={handleNavigateToLogin}>
-          <AppText variant="button" className="text-primary-500 underline">
-            Entrar
-          </AppText>
-        </Pressable>
-      </AppContainer>
-    </AppContainer>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 

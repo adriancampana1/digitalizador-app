@@ -8,10 +8,10 @@ export type AuthState = {
 };
 
 export type AuthActions = {
+  rehydrate: () => Promise<void>;
   login: (phone: string, password: string) => Promise<void>;
   register: (phone: string, name: string, password: string) => Promise<void>;
   logout: () => void;
-  setUser: (user: User | null) => void;
 };
 
 export type AuthStore = AuthState & AuthActions;

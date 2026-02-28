@@ -2,6 +2,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
 import { useAuth } from '@/hooks';
+import { useAppStore } from '@/store/app';
 
 import AppTabNavigator from './AppNavigator';
 import AuthStackNavigator from './AuthNavigator';
@@ -12,7 +13,9 @@ const Stack = createStackNavigator<RootStackParamList>();
 
 const RootNavigator = () => {
   const { isAuthenticated } = useAuth();
-  // const isAuthenticated = false;
+  const { isAppReady } = useAppStore();
+
+  if (!isAppReady) return null;
 
   return (
     <NavigationContainer>

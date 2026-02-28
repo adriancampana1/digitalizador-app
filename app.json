@@ -29,7 +29,11 @@
     "plugins": ["expo-secure-store", "expo-font"],
     "extra": {
       "apiUrl": "http://192.168.3.8:8080",
-      "environment": "development"
+      "environment": "development",
+      "AUTH": {
+        "TOKEN_KEY": "CCBLONDREG",
+        "USER_KEY": "USERLONDREGCCB"
+      }
     }
   }
 }
