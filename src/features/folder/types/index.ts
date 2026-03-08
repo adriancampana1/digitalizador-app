@@ -5,8 +5,9 @@ export interface ListFoldersRequest {
   folderPath?: string;
 }
 
-interface FolderOption {
+export interface FolderOption {
   id: string;
+  name: string;
   path: string;
   hasChildren: boolean;
 }

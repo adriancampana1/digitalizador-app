@@ -1,3 +1,5 @@
+import { useCallback } from 'react';
+
 import {
   Toast,
   ToastDescription,
@@ -17,35 +19,50 @@ type ShowToastPropsType = {
 export const useAppToast = () => {
   const toast = useToast();
 
-  const show = ({
-    title,
-    description,
-    action = 'info',
-    duration = 3000,
-  }: ShowToastPropsType) => {
-    toast.show({
-      placement: 'top',
-      duration,
-      render: ({ id }) => (
-        <Toast nativeID={`toast-${id}`} action={action} variant="solid">
-          <ToastTitle>{title}</ToastTitle>
-          {description && <ToastDescription>{description}</ToastDescription>}
-        </Toast>
-      ),
-    });
-  };
+  const show = useCallback(
+    ({
+      title,
+      description,
+      action = 'info',
+      duration = 3000,
+    }: ShowToastPropsType) => {
+      toast.show({
+        placement: 'top',
+        duration,
+        render: ({ id }) => (
+          <Toast nativeID={`toast-${id}`} action={action} variant="solid">
+            <ToastTitle>{title}</ToastTitle>
+            {description && <ToastDescription>{description}</ToastDescription>}
+          </Toast>
+        ),
+      });
+    },
+    [toast]
+  );
 
-  const success = (title: string, description?: string) =>
-    show({ title, description, action: 'success' });
+  const success = useCallback(
+    (title: string, description?: string) =>
+      show({ title, description, action: 'success' }),
+    [show]
+  );
 
-  const error = (title: string, description?: string) =>
-    show({ title, description, action: 'error' });
+  const error = useCallback(
+    (title: string, description?: string) =>
+      show({ title, description, action: 'error' }),
+    [show]
+  );
 
-  const warning = (title: string, description?: string) =>
-    show({ title, description, action: 'warning' });
+  const warning = useCallback(
+    (title: string, description?: string) =>
+      show({ title, description, action: 'warning' }),
+    [show]
+  );
 
-  const info = (title: string, description?: string) =>
-    show({ title, description, action: 'info' });
+  const info = useCallback(
+    (title: string, description?: string) =>
+      show({ title, description, action: 'info' }),
+    [show]
+  );
 
   return { show, success, error, warning, info };
 };

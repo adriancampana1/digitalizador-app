@@ -1,6 +1,6 @@
 import type { ApiError, ApiResponse } from '@/api';
 
-import { findAllDocumentsMock, searchDocumentsMock } from '../utils/mocks';
+import { findAllDocumentsMock } from '../utils/mocks';
 
 import type {
   CreateDocumentRequest,
@@ -34,7 +34,7 @@ class DocumentMockService implements DocumentHttpServiceType {
   async searchDocuments(
     _request: DocumentSearchRequest
   ): Promise<ApiResponse<DocumentResponse[]> | ApiError> {
-    return { data: searchDocumentsMock, status: 200 };
+    return { data: findAllDocumentsMock, status: 200 };
   }
 
   async findAllDocuments(): Promise<

@@ -26,7 +26,7 @@ class DocumentHttpService implements DocumentHttpServiceType {
   async refreshThumbnail(
     documentId: string
   ): Promise<ApiResponse<DocumentResponse> | ApiError> {
-    return apiClient.post(`/document/${documentId}/refresh-thumbnail`);
+    return apiClient.post(`/document/${documentId}/thumbnail/refresh`);
   }
 
   /**

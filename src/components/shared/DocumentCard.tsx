@@ -51,7 +51,7 @@ const DocumentThumbnail = ({
 }: Pick<DocumentCardProps, 'document'> & {
   onThumbnailRefresh?: (id: string) => void;
 }) => {
-  const [imageError, setImageError] = useState(false);
+  const [failedUrls, setFailedUrls] = useState<Set<string>>(new Set());
 
   const mimeType = fileMetadata?.mimeType ?? 'application/octet-stream';
   const iconName = getFileTypeIconName(
@@ -59,10 +59,18 @@ const DocumentThumbnail = ({
   ) as keyof typeof Feather.glyphMap;
   const extension = getFileExtension(title);
 
+  const imageError = !!thumbnailUrl && failedUrls.has(thumbnailUrl);
+
   const handleImageError = useCallback(() => {
-    setImageError(true);
+    if (thumbnailUrl) {
+      setFailedUrls(prev => {
+        const next = new Set(prev);
+        next.add(thumbnailUrl);
+        return next;
+      });
+    }
     onThumbnailRefresh?.(id);
-  }, [id, onThumbnailRefresh]);
+  }, [id, thumbnailUrl, onThumbnailRefresh]);
 
   if (thumbnailUrl && !imageError) {
     return (

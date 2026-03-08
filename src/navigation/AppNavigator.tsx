@@ -13,10 +13,12 @@ import ScanScreen from '@/features/scan/screens';
 import FolderDetailScreen from '../features/folder/screens/FolderDetailScreen';
 
 import type {
+  AppStackParamList,
   AppTabParamList,
   DocumentStackParamList,
   FolderStackParamList,
 } from './types/types';
+import type { StackNavigationProp } from '@react-navigation/stack';
 
 // ─── Stack Navigators ────────────────────────────────────────
 const DocumentStack = createStackNavigator<DocumentStackParamList>();
@@ -49,6 +51,8 @@ const FolderNavigator = () => {
 // ─── Tab Navigator ───────────────────────────────────────────
 const Tab = createBottomTabNavigator<AppTabParamList>();
 
+const ScanTabPlaceholder = () => null;
+
 const renderTabBar = (props: React.ComponentProps<typeof CustomTabBar>) => (
   <CustomTabBar {...props} />
 );
@@ -67,7 +71,18 @@ const AppTabNavigator = () => {
         component={FolderNavigator}
         options={{ tabBarLabel: 'Pastas' }}
       />
-      <Tab.Screen name="Scan" component={ScanScreen} />
+      <Tab.Screen
+        name="Scan"
+        component={ScanTabPlaceholder}
+        listeners={({ navigation }) => ({
+          tabPress: e => {
+            e.preventDefault();
+            navigation
+              .getParent<StackNavigationProp<AppStackParamList>>()
+              ?.navigate('ScanFlow');
+          },
+        })}
+      />
       <Tab.Screen
         name="Search"
         component={DocumentNavigator}
@@ -78,4 +93,20 @@ const AppTabNavigator = () => {
   );
 };
 
-export default AppTabNavigator;
+const AppStack = createStackNavigator<AppStackParamList>();
+
+const AppNavigator = () => (
+  <AppStack.Navigator screenOptions={{ headerShown: false }}>
+    <AppStack.Screen name="AppTabs" component={AppTabNavigator} />
+    <AppStack.Screen
+      name="ScanFlow"
+      component={ScanScreen}
+      options={{
+        presentation: 'modal',
+        cardStyle: { backgroundColor: 'transparent' },
+      }}
+    />
+  </AppStack.Navigator>
+);
+
+export default AppNavigator;
