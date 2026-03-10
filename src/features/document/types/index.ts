@@ -1,11 +1,11 @@
 import type { ApiError, ApiResponse } from '@/api';
 
 export enum StorageProvider {
-  SHAREPOINT = 'sharepoint',
-  GOOGLE_DRIVE = 'google_drive',
-  ONEDRIVE = 'onedrive',
-  DROPBOX = 'dropbox',
-  LOCAL = 'local',
+  sharepoint = 'sharepoint',
+  google_drive = 'google-drive',
+  onedrive = 'onedrive',
+  dropbox = 'dropbox',
+  local = 'local',
 }
 
 export interface DocumentResponse {

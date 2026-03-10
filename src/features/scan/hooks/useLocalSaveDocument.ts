@@ -5,6 +5,7 @@ import * as Sharing from 'expo-sharing';
 
 import { useAppToast } from '@/hooks';
 
+import { convertPagesToPdf } from '../utils/pdfUtils';
 import { resolveDocumentName } from '../utils/scanUtils';
 
 import type { ScannedPage } from '../types';
@@ -37,18 +38,26 @@ export function useLocalSaveDocument() {
         const fileName = `${resolvedName}.${extension}`;
 
         const canShare = await Sharing.isAvailableAsync();
-        const page = pages[0];
-        if (!page) throw new Error('Nenhuma página disponível para salvar.');
 
-        const sourceFile = new File(Paths.cache, fileName);
-        sourceFile.create({ overwrite: true });
+        let fileUri: string;
+        if (outputFormat === 'pdf') {
+          fileUri = await convertPagesToPdf(pages, fileName);
+        } else {
+          const page = pages[0];
+          if (!page) throw new Error('Nenhuma página disponível para salvar.');
 
-        const response = await fetch(page.uri);
-        const arrayBuffer = await response.arrayBuffer();
-        sourceFile.write(new Uint8Array(arrayBuffer));
+          const sourceFile = new File(Paths.cache, fileName);
+          sourceFile.create({ overwrite: true });
 
-        if (!sourceFile.exists || sourceFile.size === 0) {
-          throw new Error('Arquivo temporário está vazio.');
+          const response = await fetch(page.uri);
+          const arrayBuffer = await response.arrayBuffer();
+          sourceFile.write(new Uint8Array(arrayBuffer));
+
+          if (!sourceFile.exists || sourceFile.size === 0) {
+            throw new Error('Arquivo temporário está vazio.');
+          }
+
+          fileUri = sourceFile.uri;
         }
 
         if (!canShare) {
@@ -56,7 +65,7 @@ export function useLocalSaveDocument() {
           return true;
         }
 
-        await Sharing.shareAsync(sourceFile.uri, {
+        await Sharing.shareAsync(fileUri, {
           mimeType,
           dialogTitle: `Salvar ${fileName}`,
           UTI: mimeType,

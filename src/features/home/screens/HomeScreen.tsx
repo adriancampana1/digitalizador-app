@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { StatusBar } from 'react-native';
+import { StatusBar, View } from 'react-native';
 
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { FlatList, RefreshControl } from 'react-native-gesture-handler';
@@ -9,6 +9,7 @@ import { AppContainer } from '@/components/base/AppContainer';
 import { AppSpacer } from '@/components/base/AppSpacer';
 import { AppText } from '@/components/base/AppText';
 import DocumentCard from '@/components/shared/DocumentCard';
+import { DocumentCardSkeleton } from '@/components/shared/DocumentCardSkeleton';
 import { useDownloadDocument } from '@/features/document/hooks/useDownloadDocument';
 import { useFindAllDocuments } from '@/features/document/hooks/useFindAllDocuments';
 import { useRefreshThumbnail } from '@/features/document/hooks/useRefreshThumbnail';
@@ -34,6 +35,19 @@ const ListHeaderComponent = () => (
         Ver todos
       </AppText>
     </AppContainer>
+  </AppContainer>
+);
+
+const ListDocumentCardSkeleton = () => (
+  <AppContainer paddingVertical="none" paddingHorizontal="none">
+    {Array.from({ length: 3 }).map((_, index) => (
+      <View key={index} className="w-full">
+        <AppContainer paddingVertical="none">
+          <DocumentCardSkeleton />
+        </AppContainer>
+        {index < 3 - 1 && <AppSpacer size="sm" />}
+      </View>
+    ))}
   </AppContainer>
 );
 
@@ -65,36 +79,43 @@ const HomeScreen = () => {
       <StatusBar translucent />
       <Header searchText={searchText} onSearchChange={setSearchText} />
 
-      <FlatList
-        data={documents}
-        renderItem={({ item }) => (
-          <AppContainer paddingVertical="none">
-            <DocumentCard
-              document={item}
-              onThumbnailRefresh={refreshThumbnail}
-              onViewOriginal={() => viewOriginal(item.storageUrl)}
-              onDownload={() =>
-                download(
-                  item.id,
-                  item.fileMetadata?.originalFileName ?? item.title
-                )
-              }
-              isDownloading={downloadingId === item.id}
+      {activeQuery.isLoading ? (
+        <>
+          <ListHeaderComponent />
+          <ListDocumentCardSkeleton />
+        </>
+      ) : (
+        <FlatList
+          data={documents}
+          renderItem={({ item }) => (
+            <AppContainer paddingVertical="none">
+              <DocumentCard
+                document={item}
+                onThumbnailRefresh={refreshThumbnail}
+                onViewOriginal={() => viewOriginal(item.storageUrl)}
+                onDownload={() =>
+                  download(
+                    item.id,
+                    item.fileMetadata?.originalFileName ?? item.title
+                  )
+                }
+                isDownloading={downloadingId === item.id}
+              />
+            </AppContainer>
+          )}
+          refreshControl={
+            <RefreshControl
+              refreshing={activeQuery.isRefetching}
+              onRefresh={activeQuery.refetch}
             />
-          </AppContainer>
-        )}
-        refreshControl={
-          <RefreshControl
-            refreshing={activeQuery.isLoading}
-            onRefresh={activeQuery.refetch}
-          />
-        }
-        ListHeaderComponent={ListHeaderComponent}
-        ItemSeparatorComponent={renderDocumentListSeparator}
-        contentContainerStyle={{ paddingBottom: tabBarHeight + 40 }}
-        showsVerticalScrollIndicator={false}
-        className="w-full bg-background-light"
-      />
+          }
+          ListHeaderComponent={ListHeaderComponent}
+          ItemSeparatorComponent={renderDocumentListSeparator}
+          contentContainerStyle={{ paddingBottom: tabBarHeight + 40 }}
+          showsVerticalScrollIndicator={false}
+          className="w-full bg-background-light"
+        />
+      )}
     </AppContainer>
   );
 };

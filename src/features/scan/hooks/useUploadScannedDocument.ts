@@ -8,6 +8,7 @@ import type { StorageProvider } from '@/features/document/types';
 import { useAppToast } from '@/hooks';
 import { isApiError } from '@/utils/api';
 
+import { convertPagesToPdf } from '../utils/pdfUtils';
 import { resolveDocumentName } from '../utils/scanUtils';
 
 import type { ScannedPage } from '../types';
@@ -40,17 +41,24 @@ export function useUploadScannedDocument() {
       try {
         const resolvedName = resolveDocumentName(documentName);
 
-        const page = pages[0];
-        if (!page) throw new Error('Nenhuma página disponível para envio.');
-
         const mimeType =
           outputFormat === 'pdf' ? 'application/pdf' : 'image/jpeg';
         const extension = outputFormat === 'pdf' ? 'pdf' : 'jpg';
+        const fileName = `${resolvedName}.${extension}`;
+
+        let fileUri: string;
+        if (outputFormat === 'pdf') {
+          fileUri = await convertPagesToPdf(pages, fileName);
+        } else {
+          const page = pages[0];
+          if (!page) throw new Error('Nenhuma página disponível para envio.');
+          fileUri = page.uri;
+        }
 
         const response = await documentService.uploadDocument({
           file: {
-            uri: page.uri,
-            name: `${resolvedName}.${extension}`,
+            uri: fileUri,
+            name: fileName,
             type: mimeType,
           },
           title: resolvedName,

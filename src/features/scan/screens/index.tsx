@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import { View } from 'react-native';
 
-import { useAppNavigation } from '@/hooks';
+import { useAppNavigation, useAppToast } from '@/hooks';
 
 import { SaveDocumentModal } from '../components/SaveDocumentModal';
 import { useDocumentScanner } from '../hooks/useDocumentScanner';
@@ -14,6 +14,8 @@ const ScanScreen = () => {
   const { scan, status, pages, reset } = useDocumentScanner();
   const [modalVisible, setModalVisible] = useState(false);
   const [frozenPages, setFrozenPages] = useState<ScannedPage[]>([]);
+
+  const toast = useAppToast();
 
   // Rastreia o status anterior para distinguir "idle inicial"
   // de "idle pós-cancelamento" (o hook volta para idle ao cancelar).
@@ -39,40 +41,6 @@ const ScanScreen = () => {
       navigation.goBack();
     }
 
-    /**
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     * - [ ] PDFs não estão exibindo thumbnail
-     * - [ ] Excluir Storages que não estão disponíveis ainda, deixar somente Sharepoint no momento (é o único com implementação pronta)
-     * - [ ] Analisar se vai deixar opção de PDF ou JPEG, ou se força um tipo único de arquivo
-     * - [ ] Corrigir opção para Baixar arquivo localmente. Atualmente quebra o app e fecha sozinho
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     */
-
     prevStatus.current = status;
   }, [status, pages, navigation]);
 
@@ -83,6 +51,7 @@ const ScanScreen = () => {
 
   const handleSaveSuccess = () => {
     reset();
+    toast.success('Download concluído!', `"O documento está pronto.`);
     navigation.goBack();
   };
 

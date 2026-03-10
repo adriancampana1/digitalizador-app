@@ -1,6 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import { Animated, Keyboard, Modal, Pressable, View } from 'react-native';
+import {
+  Animated,
+  Dimensions,
+  Keyboard,
+  Modal,
+  Pressable,
+  ScrollView,
+  View,
+} from 'react-native';
 
 import { Ionicons } from '@expo/vector-icons';
 
@@ -16,8 +24,6 @@ import { useUploadScannedDocument } from '../hooks/useUploadScannedDocument';
 import { generateDocumentName } from '../utils/scanUtils';
 
 import type { OutputFormat, SaveDestinationType, ScannedPage } from '../types';
-
-type Step = 'name' | 'destination';
 
 type ProviderOption = {
   id: StorageProvider;
@@ -36,7 +42,7 @@ type FormatOption = {
 
 const PROVIDER_OPTIONS: ProviderOption[] = [
   {
-    id: StorageProvider.SHAREPOINT,
+    id: StorageProvider.sharepoint,
     label: 'SharePoint',
     description: 'Armazenar no SharePoint da organização',
     icon: 'business-outline',
@@ -57,53 +63,6 @@ const FORMAT_OPTIONS: FormatOption[] = [
     description: 'Arquivo de imagem compacto',
   },
 ];
-
-type StepIndicatorProps = { current: Step };
-
-const StepIndicator = ({ current }: StepIndicatorProps) => (
-  <View className="flex-row items-center justify-center gap-2">
-    <View className="flex-row items-center">
-      <View
-        className={`w-6 h-6 rounded-full items-center justify-center ${
-          current === 'name' ? 'bg-primary-500' : 'bg-primary-500'
-        }`}
-      >
-        <AppText variant="caption" color="inverted" bold>
-          1
-        </AppText>
-      </View>
-      <AppText variant="caption" color="primary-500" bold className="ml-1.5">
-        Nome
-      </AppText>
-    </View>
-
-    <View className="w-8 h-px bg-typography-200 mx-1" />
-
-    <View className="flex-row items-center">
-      <View
-        className={`w-6 h-6 rounded-full items-center justify-center ${
-          current === 'destination' ? 'bg-primary-500' : 'bg-typography-200'
-        }`}
-      >
-        <AppText
-          variant="caption"
-          color={current === 'destination' ? 'inverted' : 'muted'}
-          bold
-        >
-          2
-        </AppText>
-      </View>
-      <AppText
-        variant="caption"
-        color={current === 'destination' ? 'primary-500' : 'muted'}
-        bold
-        className="ml-1.5"
-      >
-        Destino
-      </AppText>
-    </View>
-  </View>
-);
 
 type SelectableCardProps = {
   selected: boolean;
@@ -187,12 +146,11 @@ const FormatChip = ({ option, selected, onPress }: FormatChipProps) => (
   </Pressable>
 );
 
-const NextIcon = () => <Ionicons name="arrow-forward" size={18} color="#fff" />;
 const UploadIcon = () => (
   <Ionicons name="cloud-upload-outline" size={18} color="#fff" />
 );
-const DownloadIcon = () => (
-  <Ionicons name="download-outline" size={18} color="#fff" />
+const ExportIcon = () => (
+  <Ionicons name="share-social-outline" size={18} color="#fff" />
 );
 
 export type SaveDocumentModalProps = {
@@ -208,20 +166,20 @@ export const SaveDocumentModal = ({
   onClose,
   onSuccess,
 }: SaveDocumentModalProps) => {
-  const [step, setStep] = useState<Step>('name');
   const [documentName, setDocumentName] = useState('');
   const [destination, setDestination] = useState<SaveDestinationType>('upload');
   const [selectedProvider, setSelectedProvider] = useState<StorageProvider>(
-    StorageProvider.SHAREPOINT
+    StorageProvider.sharepoint
   );
   const [outputFormat, setOutputFormat] = useState<OutputFormat>('pdf');
   const [folderPath, setFolderPath] = useState<string>('');
   const [folderPickerVisible, setFolderPickerVisible] = useState(false);
 
-  // useMemo garante que o Animated.Value seja criado uma única vez sem
-  // acessar .current de um ref durante a renderização (que dispararia o lint).
-
-  const slideAnim = useMemo(() => new Animated.Value(600), []);
+  const windowHeight = useMemo(() => Dimensions.get('window').height, []);
+  const slideAnim = useMemo(
+    () => new Animated.Value(windowHeight),
+    [windowHeight]
+  );
 
   const { upload, isLoading: isUploading } = useUploadScannedDocument();
   const { save, isLoading: isSaving } = useLocalSaveDocument();
@@ -229,41 +187,27 @@ export const SaveDocumentModal = ({
 
   useEffect(() => {
     if (visible) {
-      slideAnim.setValue(600);
+      slideAnim.setValue(windowHeight);
       Animated.spring(slideAnim, {
         toValue: 0,
         damping: 20,
         stiffness: 200,
         useNativeDriver: true,
-      }).start(() => {
-        setStep('name');
-        setDocumentName('');
-        setDestination('upload');
-        setSelectedProvider(StorageProvider.SHAREPOINT);
-        setOutputFormat('pdf');
-        setFolderPath('');
-      });
+      }).start();
     } else {
       Animated.timing(slideAnim, {
-        toValue: 600,
+        toValue: windowHeight,
         duration: 220,
         useNativeDriver: true,
       }).start();
     }
-  }, [visible, slideAnim]);
+  }, [visible, slideAnim, windowHeight]);
 
   const handleClose = () => {
     if (isLoading) return;
     Keyboard.dismiss();
     onClose();
   };
-
-  const handleNext = () => {
-    Keyboard.dismiss();
-    setStep('destination');
-  };
-
-  const handleBack = () => setStep('name');
 
   const handleConfirm = async () => {
     let success = false;
@@ -301,7 +245,10 @@ export const SaveDocumentModal = ({
           onPress={handleClose}
         >
           <Animated.View
-            style={{ transform: [{ translateY: slideAnim }] }}
+            style={{
+              transform: [{ translateY: slideAnim }],
+              maxHeight: windowHeight * 0.9,
+            }}
             className="bg-background-card rounded-t-3xl overflow-hidden"
           >
             <Pressable onPress={() => Keyboard.dismiss()}>
@@ -310,22 +257,11 @@ export const SaveDocumentModal = ({
               </View>
 
               <View className="px-6 pt-4 pb-8">
-                <View className="flex-row items-center mb-6">
-                  {step === 'destination' && (
-                    <Pressable
-                      onPress={handleBack}
-                      className="mr-3 w-8 h-8 rounded-full bg-gray-100 items-center justify-center"
-                      hitSlop={8}
-                    >
-                      <Ionicons name="chevron-back" size={18} color="#003D5C" />
-                    </Pressable>
-                  )}
-
+                {/* Header */}
+                <View className="flex-row items-center mb-5">
                   <View className="flex-1">
                     <AppText variant="h5" bold>
-                      {step === 'name'
-                        ? 'Salvar documento'
-                        : 'Escolher destino'}
+                      Salvar documento
                     </AppText>
                     <AppText variant="caption" color="muted" className="mt-0.5">
                       {pages.length === 1
@@ -336,100 +272,88 @@ export const SaveDocumentModal = ({
 
                   <Pressable
                     onPress={handleClose}
-                    className="w-8 h-8 rounded-full bg-gray-100 items-center justify-center"
-                    hitSlop={8}
+                    className="w-11 h-11 rounded-full bg-gray-100 items-center justify-center"
+                    hitSlop={{ top: 4, bottom: 4, left: 8, right: 8 }}
                   >
                     <Ionicons name="close" size={18} color="#6B7280" />
                   </Pressable>
                 </View>
 
-                <StepIndicator current={step} />
-                <AppSpacer size="xl" />
+                <ScrollView
+                  showsVerticalScrollIndicator={false}
+                  keyboardShouldPersistTaps="handled"
+                >
+                  <AppText variant="label" bold className="mb-2">
+                    Nome do documento
+                  </AppText>
+                  <AppInput
+                    value={documentName}
+                    onChangeText={setDocumentName}
+                    placeholder={placeholder}
+                    helperText="Deixe em branco para usar o nome gerado automaticamente."
+                  />
 
-                {/* ── Etapa 1: Nome ──────────────────────────────────────── */}
-                {step === 'name' && (
-                  <View>
-                    <AppText variant="label" bold className="mb-2">
-                      Nome do documento
-                    </AppText>
-                    <AppInput
-                      value={documentName}
-                      onChangeText={setDocumentName}
-                      placeholder={placeholder}
-                      helperText="Deixe em branco para usar o nome gerado automaticamente."
-                    />
+                  <AppSpacer size="xl" />
 
-                    <AppSpacer size="2xl" />
+                  <AppText variant="label" bold className="mb-3">
+                    Destino
+                  </AppText>
+                  <View className="flex-row rounded-xl bg-gray-100 p-1 mb-4">
+                    <Pressable
+                      onPress={() => setDestination('upload')}
+                      className={`flex-1 flex-row items-center justify-center rounded-lg py-2.5 gap-2 ${
+                        destination === 'upload'
+                          ? 'bg-background-card shadow-soft-1'
+                          : ''
+                      }`}
+                    >
+                      <Ionicons
+                        name="cloud-upload-outline"
+                        size={16}
+                        color={destination === 'upload' ? '#003D5C' : '#6B7280'}
+                      />
+                      <AppText
+                        variant="label"
+                        bold={destination === 'upload'}
+                        color={
+                          destination === 'upload' ? 'primary-500' : 'muted'
+                        }
+                      >
+                        Enviar
+                      </AppText>
+                    </Pressable>
 
-                    <AppButton
-                      title="Próximo"
-                      fullWidth
-                      onPress={handleNext}
-                      rightIcon={NextIcon}
-                    />
+                    <Pressable
+                      onPress={() => setDestination('download')}
+                      className={`flex-1 flex-row items-center justify-center rounded-lg py-2.5 gap-2 ${
+                        destination === 'download'
+                          ? 'bg-background-card shadow-soft-1'
+                          : ''
+                      }`}
+                    >
+                      <Ionicons
+                        name="share-social-outline"
+                        size={16}
+                        color={
+                          destination === 'download' ? '#003D5C' : '#6B7280'
+                        }
+                      />
+                      <AppText
+                        variant="label"
+                        bold={destination === 'download'}
+                        color={
+                          destination === 'download' ? 'primary-500' : 'muted'
+                        }
+                      >
+                        Exportar
+                      </AppText>
+                    </Pressable>
                   </View>
-                )}
 
-                {/* ── Etapa 2: Destino ───────────────────────────────────── */}
-                {step === 'destination' && (
-                  <View>
-                    <View className="flex-row rounded-xl bg-gray-100 p-1 mb-5">
-                      <Pressable
-                        onPress={() => setDestination('upload')}
-                        className={`flex-1 flex-row items-center justify-center rounded-lg py-2.5 gap-2 ${
-                          destination === 'upload'
-                            ? 'bg-background-card shadow-soft-1'
-                            : ''
-                        }`}
-                      >
-                        <Ionicons
-                          name="cloud-upload-outline"
-                          size={16}
-                          color={
-                            destination === 'upload' ? '#003D5C' : '#6B7280'
-                          }
-                        />
-                        <AppText
-                          variant="label"
-                          bold={destination === 'upload'}
-                          color={
-                            destination === 'upload' ? 'primary-500' : 'muted'
-                          }
-                        >
-                          Enviar
-                        </AppText>
-                      </Pressable>
-
-                      <Pressable
-                        onPress={() => setDestination('download')}
-                        className={`flex-1 flex-row items-center justify-center rounded-lg py-2.5 gap-2 ${
-                          destination === 'download'
-                            ? 'bg-background-card shadow-soft-1'
-                            : ''
-                        }`}
-                      >
-                        <Ionicons
-                          name="download-outline"
-                          size={16}
-                          color={
-                            destination === 'download' ? '#003D5C' : '#6B7280'
-                          }
-                        />
-                        <AppText
-                          variant="label"
-                          bold={destination === 'download'}
-                          color={
-                            destination === 'download' ? 'primary-500' : 'muted'
-                          }
-                        >
-                          Baixar
-                        </AppText>
-                      </Pressable>
-                    </View>
-
-                    {destination === 'upload' && (
-                      <View className="gap-2 mb-4">
-                        {PROVIDER_OPTIONS.map(opt => (
+                  {destination === 'upload' && (
+                    <View className="gap-2 mb-4">
+                      {PROVIDER_OPTIONS.length > 1 &&
+                        PROVIDER_OPTIONS.map(opt => (
                           <SelectableCard
                             key={opt.id}
                             selected={selectedProvider === opt.id}
@@ -445,94 +369,93 @@ export const SaveDocumentModal = ({
                           />
                         ))}
 
-                        <AppText variant="label" bold className="mt-2 mb-1">
-                          Pasta de destino
-                        </AppText>
-                        <Pressable
-                          onPress={() => setFolderPickerVisible(true)}
-                          className="flex-row items-center rounded-xl p-4 border border-typography-200 bg-background-card"
-                        >
-                          <View className="w-10 h-10 rounded-lg bg-primary-50 items-center justify-center mr-3">
-                            <Ionicons
-                              name="folder-outline"
-                              size={20}
-                              color="#003D5C"
-                            />
-                          </View>
-                          <View className="flex-1">
-                            <AppText variant="caption" color="muted">
-                              {folderPath
-                                ? 'Pasta selecionada'
-                                : 'Salvar na raiz (padrão)'}
-                            </AppText>
-                            <AppText
-                              variant="label"
-                              color={folderPath ? 'default' : 'muted'}
-                              numberOfLines={1}
-                              className="mt-0.5"
-                            >
-                              {folderPath || 'Toque para selecionar uma pasta'}
-                            </AppText>
-                          </View>
+                      <AppText variant="label" bold className="mt-2 mb-1">
+                        Pasta de destino
+                      </AppText>
+                      <Pressable
+                        onPress={() => setFolderPickerVisible(true)}
+                        className="flex-row items-center rounded-xl p-4 border border-typography-200 bg-background-card"
+                      >
+                        <View className="w-10 h-10 rounded-lg bg-primary-50 items-center justify-center mr-3">
                           <Ionicons
-                            name="chevron-forward"
-                            size={16}
-                            color="#9ca3af"
+                            name="folder-outline"
+                            size={20}
+                            color="#003D5C"
                           />
-                        </Pressable>
-                      </View>
-                    )}
-
-                    {destination === 'download' && (
-                      <View className="flex-row items-start rounded-xl bg-info-50 border border-info-100 p-4 mb-4">
+                        </View>
+                        <View className="flex-1">
+                          <AppText variant="caption" color="muted">
+                            {folderPath
+                              ? 'Pasta selecionada'
+                              : 'Salvar na raiz (padrão)'}
+                          </AppText>
+                          <AppText
+                            variant="label"
+                            color={folderPath ? 'default' : 'muted'}
+                            numberOfLines={1}
+                            className="mt-0.5"
+                          >
+                            {folderPath || 'Toque para selecionar uma pasta'}
+                          </AppText>
+                        </View>
                         <Ionicons
-                          name="information-circle-outline"
-                          size={18}
-                          color="#2563eb"
+                          name="chevron-forward"
+                          size={16}
+                          color="#9ca3af"
                         />
-                        <AppText
-                          variant="caption"
-                          color="info-600"
-                          className="flex-1 ml-2"
-                        >
-                          O arquivo será salvo localmente no seu dispositivo e
-                          você poderá escolher onde armazená-lo.
-                        </AppText>
-                      </View>
-                    )}
-
-                    <AppText variant="label" bold className="mb-2">
-                      Formato do arquivo
-                    </AppText>
-                    <View className="flex-row gap-3 mb-6">
-                      {FORMAT_OPTIONS.map(opt => (
-                        <FormatChip
-                          key={opt.id}
-                          option={opt}
-                          selected={outputFormat === opt.id}
-                          onPress={() => setOutputFormat(opt.id)}
-                        />
-                      ))}
+                      </Pressable>
                     </View>
+                  )}
 
-                    <AppButton
-                      title={
-                        destination === 'upload'
-                          ? 'Enviar documento'
-                          : 'Baixar documento'
-                      }
-                      fullWidth
-                      isLoading={isLoading}
-                      loadingText={
-                        destination === 'upload' ? 'Enviando…' : 'Preparando…'
-                      }
-                      onPress={handleConfirm}
-                      leftIcon={
-                        destination === 'upload' ? UploadIcon : DownloadIcon
-                      }
-                    />
+                  {destination === 'download' && (
+                    <View className="flex-row items-start rounded-xl bg-info-50 border border-info-100 p-4 mb-4">
+                      <Ionicons
+                        name="information-circle-outline"
+                        size={18}
+                        color="#2563eb"
+                      />
+                      <AppText
+                        variant="caption"
+                        color="info-600"
+                        className="flex-1 ml-2"
+                      >
+                        O arquivo será compartilhado via sistema do dispositivo
+                        para que você possa escolher onde armazená-lo.
+                      </AppText>
+                    </View>
+                  )}
+
+                  <AppText variant="label" bold className="mb-2">
+                    Formato do arquivo
+                  </AppText>
+                  <View className="flex-row gap-3 mb-6">
+                    {FORMAT_OPTIONS.map(opt => (
+                      <FormatChip
+                        key={opt.id}
+                        option={opt}
+                        selected={outputFormat === opt.id}
+                        onPress={() => setOutputFormat(opt.id)}
+                      />
+                    ))}
                   </View>
-                )}
+
+                  <AppButton
+                    title={
+                      destination === 'upload'
+                        ? 'Enviar documento'
+                        : 'Exportar documento'
+                    }
+                    fullWidth
+                    isLoading={isLoading}
+                    loadingText={
+                      destination === 'upload' ? 'Enviando…' : 'Preparando…'
+                    }
+                    onPress={handleConfirm}
+                    leftIcon={
+                      destination === 'upload' ? UploadIcon : ExportIcon
+                    }
+                  />
+                </ScrollView>
               </View>
             </Pressable>
           </Animated.View>
