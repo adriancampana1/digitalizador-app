@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Pressable, TextInput, View } from 'react-native';
+import { forwardRef } from 'react';
+
+import { Pressable, TextInput, type TextInputProps, View } from 'react-native';
 
 import {
   FormControl,
@@ -16,7 +18,10 @@ import { AlertCircleIcon, Icon } from '../ui/icon';
 type InputVariant = 'outline' | 'underlined' | 'rounded';
 type KeyboardType = 'default' | 'email-address' | 'numeric' | 'phone-pad';
 
-type AppInputPropsType = {
+type AppInputPropsType = Omit<
+  TextInputProps,
+  'value' | 'onChangeText' | 'placeholder' | 'keyboardType' | 'secureTextEntry'
+> & {
   value: string;
   onChangeText: (text: string) => void;
   placeholder?: string;
@@ -41,27 +46,32 @@ const variantStyles: Record<InputVariant, string> = {
   rounded: 'border border-typography-300 rounded-full bg-transparent',
 };
 
-export const AppInput = ({
-  value,
-  onChangeText,
-  placeholder,
-  label,
-  error,
-  helperText,
-  variant = 'outline',
-  isDisabled = false,
-  isRequired = false,
-  keyboardType = 'default',
-  secureTextEntry = false,
-  leftIcon: LeftIcon,
-  rightIcon: RightIcon,
-  onRightIconPress,
-  className,
-  inputClassName,
-}: AppInputPropsType) => {
-  const isInvalid = !!error;
-  const variantStyle = variantStyles[variant];
-  const inputBaseStyle = `
+export const AppInput = forwardRef<TextInput, AppInputPropsType>(
+  (
+    {
+      value,
+      onChangeText,
+      placeholder,
+      label,
+      error,
+      helperText,
+      variant = 'outline',
+      isDisabled = false,
+      isRequired = false,
+      keyboardType = 'default',
+      secureTextEntry = false,
+      leftIcon: LeftIcon,
+      rightIcon: RightIcon,
+      onRightIconPress,
+      className,
+      inputClassName,
+      ...inputProps
+    },
+    ref
+  ) => {
+    const isInvalid = !!error;
+    const variantStyle = variantStyles[variant];
+    const inputBaseStyle = `
     ${variantStyle}
     ${isInvalid ? 'border-error-500' : ''}
     ${isDisabled ? 'opacity-50' : ''}
@@ -70,58 +80,69 @@ export const AppInput = ({
     h-14
   `.trim();
 
-  return (
-    <FormControl
-      isInvalid={isInvalid}
-      isDisabled={isDisabled}
-      isRequired={isRequired}
-      className={className}
-    >
-      {label && (
-        <FormControlLabel>
-          <FormControlLabelText>{label}</FormControlLabelText>
-        </FormControlLabel>
-      )}
-
-      <View className={`px-4 ${inputBaseStyle} ${inputClassName ?? ''} w-full`}>
-        {LeftIcon && (
-          <Icon as={LeftIcon} size="lg" className="text-typography-500 mr-3" />
+    return (
+      <FormControl
+        isInvalid={isInvalid}
+        isDisabled={isDisabled}
+        isRequired={isRequired}
+        className={className}
+      >
+        {label && (
+          <FormControlLabel>
+            <FormControlLabelText>{label}</FormControlLabelText>
+          </FormControlLabel>
         )}
 
-        <TextInput
-          value={value}
-          onChangeText={onChangeText}
-          placeholder={placeholder}
-          editable={!isDisabled}
-          keyboardType={keyboardType}
-          secureTextEntry={secureTextEntry}
-          className={`flex-1 text-typography-900`}
-          placeholderTextColor="#a3a3a3"
-        />
-
-        {RightIcon && (
-          <Pressable onPress={onRightIconPress} hitSlop={8}>
+        <View
+          className={`px-4 ${inputBaseStyle} ${inputClassName ?? ''} w-full`}
+        >
+          {LeftIcon && (
             <Icon
-              as={RightIcon}
+              as={LeftIcon}
               size="lg"
-              className="text-typography-500 ml-3"
+              className="text-typography-500 mr-3"
             />
-          </Pressable>
+          )}
+
+          <TextInput
+            ref={ref}
+            value={value}
+            onChangeText={onChangeText}
+            placeholder={placeholder}
+            editable={!isDisabled}
+            keyboardType={keyboardType}
+            secureTextEntry={secureTextEntry}
+            className={`flex-1 text-typography-900`}
+            placeholderTextColor="#a3a3a3"
+            {...inputProps}
+          />
+
+          {RightIcon && (
+            <Pressable onPress={onRightIconPress} hitSlop={8}>
+              <Icon
+                as={RightIcon}
+                size="lg"
+                className="text-typography-500 ml-3"
+              />
+            </Pressable>
+          )}
+        </View>
+
+        {helperText && !isInvalid && (
+          <FormControlHelper>
+            <FormControlHelperText>{helperText}</FormControlHelperText>
+          </FormControlHelper>
         )}
-      </View>
 
-      {helperText && !isInvalid && (
-        <FormControlHelper>
-          <FormControlHelperText>{helperText}</FormControlHelperText>
-        </FormControlHelper>
-      )}
+        {isInvalid && error && (
+          <FormControlError>
+            <FormControlErrorIcon as={AlertCircleIcon} />
+            <FormControlErrorText>{error}</FormControlErrorText>
+          </FormControlError>
+        )}
+      </FormControl>
+    );
+  }
+);
 
-      {isInvalid && error && (
-        <FormControlError>
-          <FormControlErrorIcon as={AlertCircleIcon} />
-          <FormControlErrorText>{error}</FormControlErrorText>
-        </FormControlError>
-      )}
-    </FormControl>
-  );
-};
+AppInput.displayName = 'AppInput';

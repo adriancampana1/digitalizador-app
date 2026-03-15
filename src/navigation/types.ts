@@ -23,7 +23,7 @@ export type DocumentStackParamList = {
 
 export type FolderStackParamList = {
   FolderList: undefined;
-  FolderDetail: { folderId: string };
+  FolderDetail: { folderId: string; folderName: string; folderPath: string };
   FolderEdit: { folderId: string };
 };
 

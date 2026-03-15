@@ -39,16 +39,11 @@ const ListHeaderComponent = () => (
 );
 
 const ListDocumentCardSkeleton = () => (
-  <AppContainer paddingVertical="none" paddingHorizontal="none">
+  <View className="w-full px-2xl gap-sm">
     {Array.from({ length: 3 }).map((_, index) => (
-      <View key={index} className="w-full">
-        <AppContainer paddingVertical="none">
-          <DocumentCardSkeleton />
-        </AppContainer>
-        {index < 3 - 1 && <AppSpacer size="sm" />}
-      </View>
+      <DocumentCardSkeleton key={index} />
     ))}
-  </AppContainer>
+  </View>
 );
 
 const renderDocumentListSeparator = () => <AppSpacer size="sm" />;
@@ -68,7 +63,6 @@ const HomeScreen = () => {
 
   const activeQuery = isSearching ? searchDocuments : allDocuments;
   const documents: DocumentResponse[] = activeQuery.data ?? [];
-
   return (
     <AppContainer
       paddingVertical="none"
@@ -79,7 +73,7 @@ const HomeScreen = () => {
       <StatusBar translucent />
       <Header searchText={searchText} onSearchChange={setSearchText} />
 
-      {activeQuery.isLoading ? (
+      {activeQuery?.isLoading ? (
         <>
           <ListHeaderComponent />
           <ListDocumentCardSkeleton />

@@ -225,7 +225,7 @@ const styles = StyleSheet.create({
   // Container externo – posiciona a bar flutuante na parte inferior
   outerContainer: {
     position: 'absolute',
-    bottom: 0,
+    bottom: 10,
     left: 0,
     right: 0,
     alignItems: 'center',
