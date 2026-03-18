@@ -18,6 +18,7 @@ import { useViewOriginal } from '@/features/document/hooks/useViewOriginal';
 import type { DocumentResponse } from '@/features/document/types';
 import { useDebounce } from '@/hooks';
 
+import { HomeEmptyState } from '../components/EmptyState';
 import Header from '../components/Header';
 
 const ListHeaderComponent = () => (
@@ -104,6 +105,12 @@ const HomeScreen = () => {
             />
           }
           ListHeaderComponent={ListHeaderComponent}
+          ListEmptyComponent={
+            <HomeEmptyState
+              isSearching={isSearching}
+              searchQuery={debouncedSearch}
+            />
+          }
           ItemSeparatorComponent={renderDocumentListSeparator}
           contentContainerStyle={{ paddingBottom: tabBarHeight + 40 }}
           showsVerticalScrollIndicator={false}

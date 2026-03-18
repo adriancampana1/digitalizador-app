@@ -110,7 +110,11 @@ export const CreateFolderModal = ({
 
     try {
       Keyboard.dismiss();
-      await createFolder({ provider, folderPath, folderName: trimmedName });
+      await createFolder({
+        provider,
+        parentFolderPath: folderPath,
+        folderName: trimmedName,
+      });
       showSuccess('Pasta criada!', `"${trimmedName}" foi criada com sucesso.`);
       reset();
       onClose();

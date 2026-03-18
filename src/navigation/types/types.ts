@@ -12,7 +12,7 @@ export type AppTabParamList = {
   Home: undefined;
   Folders: NavigatorScreenParams<FolderStackParamList>;
   Scan: undefined;
-  Search: NavigatorScreenParams<DocumentStackParamList>;
+  Search: undefined;
   Profile: undefined;
 };
 

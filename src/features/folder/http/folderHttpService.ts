@@ -33,7 +33,7 @@ class FolderHttpService implements FolderHttpServicePropsType {
   ): Promise<ApiResponse<CreateFolderResponse> | ApiError> {
     return apiClient.post('/folders', {
       storageProvider: request.provider,
-      folderPath: request.folderPath,
+      parentFolderPath: request.parentFolderPath,
       folderName: request.folderName,
     });
   }

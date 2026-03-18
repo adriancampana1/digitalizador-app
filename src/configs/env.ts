@@ -8,6 +8,7 @@ interface EnvConfig {
   timeout: number;
   AUTH_TOKEN_KEY: string;
   AUTH_USER_KEY: string;
+  appVersion: string;
 }
 
 const extra = ExpoConstants.expoConfig?.extra as
@@ -27,6 +28,7 @@ export const env: EnvConfig = {
   timeout: 30000, // 30 seconds
   AUTH_TOKEN_KEY: extra?.AUTH.TOKEN_KEY ?? 'auth_token',
   AUTH_USER_KEY: extra?.AUTH.USER_KEY ?? 'auth_user',
+  appVersion: ExpoConstants.expoConfig?.version ?? '0.0.0',
 };
 
 export const isDevelopment = env.environment === 'development';

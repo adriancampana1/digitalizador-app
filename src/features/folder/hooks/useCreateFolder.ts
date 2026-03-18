@@ -8,7 +8,7 @@ import folderHttpService from '../http/folderHttpService';
 
 type CreateFolderParams = {
   provider: StorageProvider;
-  folderPath: string;
+  parentFolderPath: string;
   folderName: string;
 };
 
@@ -18,12 +18,12 @@ export const useCreateFolder = () => {
   return useMutation({
     mutationFn: async ({
       provider,
-      folderPath,
+      parentFolderPath,
       folderName,
     }: CreateFolderParams) => {
       const response = await folderHttpService.createFolder({
         provider,
-        folderPath,
+        parentFolderPath,
         folderName,
       });
 
@@ -31,9 +31,9 @@ export const useCreateFolder = () => {
 
       return response.data;
     },
-    onSuccess: (_, { provider, folderPath }) => {
+    onSuccess: (_, { provider, parentFolderPath }) => {
       queryClient.invalidateQueries({
-        queryKey: folderKeys.list(provider, folderPath),
+        queryKey: folderKeys.list(provider, parentFolderPath),
       });
 
       queryClient.invalidateQueries({

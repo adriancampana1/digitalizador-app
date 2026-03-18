@@ -21,7 +21,7 @@ export interface ListFoldersResponse {
 
 export type CreateFolderRequest = {
   provider: StorageProvider;
-  folderPath: string;
+  parentFolderPath: string;
   folderName: string;
 };
 
