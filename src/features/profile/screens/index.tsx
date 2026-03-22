@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
-import { ArrowLeft, ChevronRight, LogOut, Settings } from 'lucide-react-native';
+import { ArrowLeft, ChevronRight, LogOut } from 'lucide-react-native';
 
 import { AppContainer } from '@/components/base/AppContainer';
 import { AppText } from '@/components/base/AppText';
@@ -17,12 +17,64 @@ import { getUserInitials } from '../utils';
 
 const FALLBACK_USER_NAME = 'Usuário';
 
-const SoonBadge = () => (
-  <View className="bg-primary-50 rounded-full px-2 py-0.5">
-    <AppText variant="caption" color="primary-500">
-      Em breve
-    </AppText>
-  </View>
+type ProfileActionRowProps = {
+  title: string;
+  description: string;
+  onPress: () => void;
+  icon: React.ReactNode;
+  disabled?: boolean;
+  destructive?: boolean;
+  trailing?: React.ReactNode;
+};
+
+const ProfileActionRow = ({
+  title,
+  description,
+  onPress,
+  icon,
+  disabled = false,
+  destructive = false,
+  trailing,
+}: ProfileActionRowProps) => (
+  <Pressable
+    onPress={onPress}
+    disabled={disabled}
+    className={`w-full flex-row items-center rounded-2xl border px-4 py-4 ${
+      destructive
+        ? 'border-error-100 bg-error-50/40'
+        : 'border-typography-100 bg-background-card'
+    } ${disabled ? 'opacity-60' : 'active:opacity-80'}`}
+    accessibilityRole="button"
+    accessibilityLabel={title}
+  >
+    <View
+      className={`mr-3 h-11 w-11 items-center justify-center rounded-full ${
+        destructive ? 'bg-error-50' : 'bg-background-light'
+      }`}
+    >
+      {icon}
+    </View>
+
+    <View className="flex-1 gap-0.5">
+      <AppText
+        variant="bodyLarge"
+        color={destructive ? 'error' : 'default'}
+        className="font-semibold"
+      >
+        {title}
+      </AppText>
+      <AppText variant="bodySmall" color="muted">
+        {description}
+      </AppText>
+    </View>
+
+    {trailing ?? (
+      <ChevronRight
+        size={18}
+        color={destructive ? colors.error[300] : colors.typography[300]}
+      />
+    )}
+  </Pressable>
 );
 
 const ProfileScreen = () => {
@@ -69,148 +121,100 @@ const ProfileScreen = () => {
       paddingHorizontal="none"
       paddingVertical="none"
     >
-      <ScrollView showsVerticalScrollIndicator={false} className="w-full">
-        <View className={`flex-1 ${bottomSpacingClass}`}>
-          <AppContainer
-            variant="safeAreaView"
-            backgroundColor="background-dark"
-            className="w-full rounded-br-3xl rounded-bl-3xl shadow-lg"
-            paddingHorizontal="2xl"
-            paddingVertical="none"
-            alignItems="center"
+      <AppContainer
+        variant="safeAreaView"
+        backgroundColor="background-light"
+        paddingHorizontal="2xl"
+        paddingVertical="none"
+        className="w-full border-b border-typography-100 pb-3"
+      >
+        <AppContainer
+          direction="row"
+          justifyContent="space-between"
+          alignItems="center"
+          spacing="none"
+          backgroundColor="transparent"
+          paddingHorizontal="none"
+          paddingVertical="none"
+          className="w-full pt-4"
+        >
+          <Pressable
+            onPress={handleBack}
+            className="h-10 w-10 items-center justify-center rounded-full border border-typography-100 bg-background-card active:opacity-70"
+            hitSlop={8}
+            accessibilityRole="button"
+            accessibilityLabel="Voltar"
           >
-            <AppContainer
-              direction="row"
-              justifyContent="space-between"
-              alignItems="center"
-              spacing="none"
-              backgroundColor="transparent"
-              paddingHorizontal="none"
-              paddingVertical="none"
-              className="w-full pt-6"
-            >
-              <Pressable
-                onPress={handleBack}
-                className="w-10 h-10 rounded-full bg-white/20 items-center justify-center active:opacity-70"
-                hitSlop={8}
-                accessibilityRole="button"
-                accessibilityLabel="Voltar"
-              >
-                <ArrowLeft size={20} color={colors.white} />
-              </Pressable>
+            <ArrowLeft size={18} color={colors.typography[700]} />
+          </Pressable>
 
-              <AppContainer
-                flex
-                backgroundColor="transparent"
-                paddingHorizontal="none"
-                paddingVertical="none"
-                alignItems="center"
-                justifyContent="center"
-                spacing="none"
-              >
-                <AppText variant="h3" color="inverted" align="center">
-                  Perfil
-                </AppText>
-              </AppContainer>
+          <AppText variant="h4" color="default" align="center">
+            Perfil
+          </AppText>
 
-              <View className="w-10 h-10" />
-            </AppContainer>
+          <View className="h-10 w-10" />
+        </AppContainer>
+      </AppContainer>
 
-            <View className="w-24 h-24 rounded-full bg-white/20 border-2 border-white/40 items-center justify-center mt-8">
-              <AppText variant="h4" color="inverted" bold>
+      <ScrollView showsVerticalScrollIndicator={false} className="w-full">
+        <View className={`flex-1 px-2xl pt-xl ${bottomSpacingClass}`}>
+          <View className="w-full rounded-3xl border border-typography-100 bg-background-card px-5 py-6">
+            <View className="h-20 w-20 items-center justify-center rounded-full bg-primary-50 self-center">
+              <AppText variant="h4" color="primary-500" bold>
                 {userInitials}
               </AppText>
             </View>
 
             <AppText
-              variant="h3"
-              color="inverted"
+              variant="h4"
+              color="default"
               align="center"
               className="mt-4"
+              numberOfLines={1}
             >
               {userName}
             </AppText>
 
-            <AppText variant="bodyLarge" color="typography-200" align="center">
+            <AppText
+              variant="body"
+              color="muted"
+              align="center"
+              className="mt-1"
+            >
               {phone}
             </AppText>
 
-            <View className="h-8" />
-          </AppContainer>
-
-          <AppContainer
-            backgroundColor="background-light"
-            className="w-full"
-            paddingHorizontal="2xl"
-            paddingVertical="2xl"
-            spacing="xl"
-          >
-            <View className="w-full gap-sm">
-              <AppText variant="label" color="muted">
-                Conta
-              </AppText>
-
-              <Pressable
-                onPress={() => {}}
-                disabled
-                className="w-full rounded-2xl bg-background-card px-4 py-4 flex-row items-center"
-                accessibilityRole="button"
-                accessibilityLabel="Abrir configurações da conta"
+            <View className="mt-4 self-center rounded-full border border-success-100 bg-success-50 px-3 py-1">
+              <AppText
+                variant="caption"
+                color="success-700"
+                className="font-medium"
               >
-                <View className="w-11 h-11 rounded-full bg-background-light items-center justify-center mr-3">
-                  <Settings size={19} color={colors.primary[500]} />
-                </View>
-
-                <View className="flex-1">
-                  <AppText variant="bodyLarge" color="default" bold>
-                    Configurações da conta
-                  </AppText>
-                  <AppText variant="bodySmall" color="muted">
-                    Gerencie nome, telefone e senha
-                  </AppText>
-                </View>
-
-                <SoonBadge />
-              </Pressable>
-            </View>
-
-            <View className="w-full gap-sm">
-              <AppText variant="label" color="muted">
-                Sessão
-              </AppText>
-
-              <Pressable
-                onPress={() => setLogoutModalVisible(true)}
-                disabled={isLoggingOut}
-                className={`w-full rounded-2xl bg-background-card px-4 py-4 flex-row items-center border border-error-100 active:opacity-75 ${
-                  isLoggingOut ? 'opacity-60' : ''
-                }`}
-                accessibilityRole="button"
-                accessibilityLabel="Sair da conta"
-              >
-                <View className="w-11 h-11 rounded-full bg-error-50 items-center justify-center mr-3">
-                  <LogOut size={19} color={colors.error[500]} />
-                </View>
-
-                <View className="flex-1">
-                  <AppText variant="bodyLarge" color="error" bold>
-                    {isLoggingOut ? 'Saindo...' : 'Sair da conta'}
-                  </AppText>
-                  <AppText variant="bodySmall" color="muted">
-                    Encerra a sessão neste dispositivo
-                  </AppText>
-                </View>
-
-                <ChevronRight size={20} color={colors.error[300]} />
-              </Pressable>
-            </View>
-
-            <View className="w-full items-center pt-2">
-              <AppText variant="caption" color="muted" align="center">
-                Versão {env.appVersion}
+                Conta ativa
               </AppText>
             </View>
-          </AppContainer>
+          </View>
+
+          <View className="mt-lg w-full gap-sm">
+            <AppText variant="label" color="muted" className="px-1">
+              Sessão
+            </AppText>
+
+            <ProfileActionRow
+              title={isLoggingOut ? 'Saindo...' : 'Sair da conta'}
+              description="Encerra a sessão neste dispositivo"
+              onPress={() => setLogoutModalVisible(true)}
+              disabled={isLoggingOut}
+              destructive
+              icon={<LogOut size={19} color={colors.error[500]} />}
+            />
+          </View>
+
+          <View className="w-full items-center pt-2xl">
+            <AppText variant="caption" color="muted" align="center">
+              Versão {env.appVersion}
+            </AppText>
+          </View>
         </View>
       </ScrollView>
 

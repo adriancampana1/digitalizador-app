@@ -19,10 +19,10 @@ import { AppText } from '@/components/base/AppText';
 import { StorageProvider } from '@/features/document/types';
 import { FolderPickerModal } from '@/features/folder/components/FolderPickerModal';
 
-import { useLocalSaveDocument } from '../hooks/useLocalSaveDocument';
-import { useUploadScannedDocument } from '../hooks/useUploadScannedDocument';
 import { generateDocumentName } from '../utils/scanUtils';
 
+import type { LocalSaveInput } from '../hooks/useLocalSaveDocument';
+import type { UploadScannedDocumentInput } from '../hooks/useUploadScannedDocument';
 import type { OutputFormat, SaveDestinationType, ScannedPage } from '../types';
 
 type ProviderOption = {
@@ -158,6 +158,10 @@ export type SaveDocumentModalProps = {
   pages: ScannedPage[];
   onClose: () => void;
   onSuccess: () => void;
+  upload: (input: UploadScannedDocumentInput) => Promise<boolean>;
+  save: (input: LocalSaveInput) => Promise<boolean>;
+  isUploading: boolean;
+  isSaving: boolean;
 };
 
 export const SaveDocumentModal = ({
@@ -165,6 +169,10 @@ export const SaveDocumentModal = ({
   pages,
   onClose,
   onSuccess,
+  upload,
+  isUploading,
+  save,
+  isSaving,
 }: SaveDocumentModalProps) => {
   const [documentName, setDocumentName] = useState('');
   const [destination, setDestination] = useState<SaveDestinationType>('upload');
@@ -181,8 +189,6 @@ export const SaveDocumentModal = ({
     [windowHeight]
   );
 
-  const { upload, isLoading: isUploading } = useUploadScannedDocument();
-  const { save, isLoading: isSaving } = useLocalSaveDocument();
   const isLoading = isUploading || isSaving;
 
   useEffect(() => {

@@ -7,6 +7,7 @@ import type {
   CreateDocumentRequest,
   DocumentHttpServiceType,
   DocumentResponse,
+  DocumentsByFolderRequest,
   DocumentSearchRequest,
 } from '../types';
 
@@ -46,6 +47,16 @@ class DocumentHttpService implements DocumentHttpServiceType {
     ApiResponse<DocumentResponse[]> | ApiError
   > {
     return apiClient.get('/document');
+  }
+
+  async findDocumentsByFolder(
+    request: DocumentsByFolderRequest
+  ): Promise<ApiResponse<DocumentResponse[]> | ApiError> {
+    return apiClient.get('/document', {
+      params: {
+        folderPath: request.folderPath,
+      },
+    });
   }
 
   async downloadDocument(

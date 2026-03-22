@@ -6,7 +6,14 @@ import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { RefreshControl } from 'react-native-gesture-handler';
 
 import { AppContainer } from '@/components/base/AppContainer';
+import { AppSpacer } from '@/components/base/AppSpacer';
 import { AppText } from '@/components/base/AppText';
+import DocumentCard from '@/components/shared/DocumentCard';
+import { DocumentCardSkeleton } from '@/components/shared/DocumentCardSkeleton';
+import { useDownloadDocument } from '@/features/document/hooks/useDownloadDocument';
+import { useFindDocumentsByFolder } from '@/features/document/hooks/useFindDocumentsByFolder';
+import { useRefreshThumbnail } from '@/features/document/hooks/useRefreshThumbnail';
+import { useViewOriginal } from '@/features/document/hooks/useViewOriginal';
 import { StorageProvider } from '@/features/document/types';
 import { useAppNavigation } from '@/hooks';
 import type { FolderStackParamList } from '@/navigation';
@@ -15,7 +22,6 @@ import { CreateFolderModal } from '../components/CreateFolderModal';
 import FolderCard from '../components/FolderCard';
 import { FolderGridSkeleton } from '../components/FolderGridSkeleton';
 import Header from '../components/Header';
-import { NewFolderCard } from '../components/NewFolderCard';
 import { useFolders } from '../hooks/useFolders';
 
 import type { StackScreenProps } from '@react-navigation/stack';
@@ -40,7 +46,7 @@ const FolderDetailEmptyState = ({
       Esta pasta está vazia
     </AppText>
     <AppText variant="body" color="muted" align="center">
-      Crie subpastas para organizar melhor seus documentos.
+      Crie subpastas ou digitalize documentos para começar.
     </AppText>
     {onCreateFolder && (
       <Pressable
@@ -56,6 +62,14 @@ const FolderDetailEmptyState = ({
   </AppContainer>
 );
 
+const DocumentsSkeleton = () => (
+  <View className="gap-sm">
+    {Array.from({ length: 2 }).map((_, index) => (
+      <DocumentCardSkeleton key={index} />
+    ))}
+  </View>
+);
+
 type FolderDetailScreenRouteProp = StackScreenProps<
   FolderStackParamList,
   'FolderDetail'
@@ -67,13 +81,27 @@ const FolderDetailScreen = ({ route }: FolderDetailScreenRouteProp) => {
   const tabBarHeight = useBottomTabBarHeight();
   const [createModalVisible, setCreateModalVisible] = useState(false);
 
-  // TODO: tornar dinâmico por provider quando o seletor de provider for implementado
   const {
     data: subfolders = [],
-    isLoading,
+    isLoading: isLoadingFolders,
     isRefetching,
-    refetch,
+    refetch: refetchFolders,
   } = useFolders(StorageProvider.sharepoint, folderPath);
+
+  const {
+    data: documents = [],
+    isLoading: isLoadingDocuments,
+    refetch: refetchDocuments,
+  } = useFindDocumentsByFolder(folderPath);
+
+  const refreshThumbnail = useRefreshThumbnail();
+  const viewOriginal = useViewOriginal();
+  const { download, downloadingId } = useDownloadDocument();
+
+  const isLoading = isLoadingFolders || isLoadingDocuments;
+  const isEmpty =
+    !isLoading && subfolders.length === 0 && documents.length === 0;
+  const hasOddGrid = (subfolders.length + 1) % 2 !== 0;
 
   const handleBack = () => {
     if (navigation.canGoBack()) navigation.goBack();
@@ -102,7 +130,10 @@ const FolderDetailScreen = ({ route }: FolderDetailScreenRouteProp) => {
     });
   };
 
-  const hasOddGrid = (subfolders.length + 1) % 2 !== 0;
+  const handleRefresh = () => {
+    refetchFolders();
+    refetchDocuments();
+  };
 
   return (
     <AppContainer
@@ -117,64 +148,97 @@ const FolderDetailScreen = ({ route }: FolderDetailScreenRouteProp) => {
         onCreateFolder={handleCreateFolder}
       />
 
-      {isLoading ? (
+      {isLoadingFolders ? (
         <FolderGridSkeleton />
-      ) : subfolders.length === 0 ? (
+      ) : isEmpty ? (
         <FolderDetailEmptyState onCreateFolder={handleCreateFolder} />
       ) : (
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: tabBarHeight + 32 }}
           refreshControl={
-            <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
+            <RefreshControl
+              refreshing={isRefetching}
+              onRefresh={handleRefresh}
+            />
           }
-          className="w-full"
+          className="w-full mt-4"
         >
-          <AppContainer
-            direction="row"
-            justifyContent="space-between"
-            alignItems="center"
-            paddingHorizontal="2xl"
-            paddingVertical="none"
-            className="pt-2xl pb-sm"
-          >
-            <AppText variant="h5" color="default">
-              {subfolders.length === 1
-                ? '1 subpasta'
-                : `${subfolders.length} subpastas`}
-            </AppText>
-          </AppContainer>
+          {subfolders.length > 0 && (
+            <>
+              <AppContainer
+                direction="row"
+                wrap
+                spacing="sm"
+                paddingHorizontal="2xl"
+                paddingVertical="none"
+              >
+                {subfolders.map(subfolder => (
+                  <View key={subfolder.id} className="flex-1 min-w-[45%]">
+                    <FolderCard
+                      name={subfolder.name}
+                      onPress={() =>
+                        handleOpenFolder(
+                          subfolder.id,
+                          subfolder.name,
+                          subfolder.path
+                        )
+                      }
+                    />
+                  </View>
+                ))}
 
-          <AppContainer
-            direction="row"
-            wrap
-            spacing="sm"
-            paddingHorizontal="2xl"
-            paddingVertical="none"
-          >
-            {subfolders.map(subfolder => (
-              <View key={subfolder.id} className="flex-1 min-w-[45%]">
-                <FolderCard
-                  name={subfolder.name}
-                  onPress={() =>
-                    handleOpenFolder(
-                      subfolder.id,
-                      subfolder.name,
-                      subfolder.path
-                    )
-                  }
-                />
-              </View>
-            ))}
+                {hasOddGrid && <View className="flex-1 min-w-[45%]" />}
+              </AppContainer>
+            </>
+          )}
 
-            <View className="flex-1 min-w-[45%]">
-              <NewFolderCard onPress={handleCreateFolder} />
-            </View>
-
-            {hasOddGrid && <View className="flex-1 min-w-[45%]" />}
-          </AppContainer>
+          {isLoadingDocuments ? (
+            <>
+              <AppContainer paddingHorizontal="2xl" paddingVertical="none">
+                <DocumentsSkeleton />
+              </AppContainer>
+            </>
+          ) : documents.length > 0 ? (
+            <>
+              <AppContainer
+                paddingHorizontal="2xl"
+                paddingVertical="md"
+                spacing="sm"
+              >
+                {documents.map(document => (
+                  <DocumentCard
+                    key={document.id}
+                    document={document}
+                    onThumbnailRefresh={refreshThumbnail}
+                    onViewOriginal={() => viewOriginal(document.storageUrl)}
+                    onDownload={() =>
+                      download(
+                        document.id,
+                        document.fileMetadata?.originalFileName ??
+                          document.title
+                      )
+                    }
+                    isDownloading={downloadingId === document.id}
+                  />
+                ))}
+              </AppContainer>
+            </>
+          ) : (
+            <AppContainer
+              paddingHorizontal="2xl"
+              paddingVertical="none"
+              className="pt-2xl"
+            >
+              <AppSpacer size="sm" />
+              <AppText variant="body" color="muted" align="center">
+                Nenhum documento nesta pasta.
+              </AppText>
+            </AppContainer>
+          )}
         </ScrollView>
       )}
+
       <CreateFolderModal
         visible={createModalVisible}
         provider={StorageProvider.sharepoint}

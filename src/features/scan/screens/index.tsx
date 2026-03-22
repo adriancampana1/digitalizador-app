@@ -6,6 +6,8 @@ import { useAppNavigation, useAppToast } from '@/hooks';
 
 import { SaveDocumentModal } from '../components/SaveDocumentModal';
 import { useDocumentScanner } from '../hooks/useDocumentScanner';
+import { useLocalSaveDocument } from '../hooks/useLocalSaveDocument';
+import { useUploadScannedDocument } from '../hooks/useUploadScannedDocument';
 
 import type { ScannedPage } from '../types';
 
@@ -15,6 +17,8 @@ const ScanScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [frozenPages, setFrozenPages] = useState<ScannedPage[]>([]);
 
+  const { upload, isLoading: isUploading } = useUploadScannedDocument();
+  const { save, isLoading: isSaving } = useLocalSaveDocument();
   const toast = useAppToast();
 
   // Rastreia o status anterior para distinguir "idle inicial"
@@ -62,6 +66,10 @@ const ScanScreen = () => {
         pages={frozenPages}
         onClose={handleModalClose}
         onSuccess={handleSaveSuccess}
+        upload={upload}
+        save={save}
+        isUploading={isUploading}
+        isSaving={isSaving}
       />
     </View>
   );

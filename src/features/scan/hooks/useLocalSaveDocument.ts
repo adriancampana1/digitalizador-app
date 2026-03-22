@@ -10,7 +10,7 @@ import { resolveDocumentName } from '../utils/scanUtils';
 
 import type { ScannedPage } from '../types';
 
-type LocalSaveInput = {
+export type LocalSaveInput = {
   pages: ScannedPage[];
   documentName: string;
   outputFormat: 'pdf' | 'jpeg';
@@ -71,7 +71,10 @@ export function useLocalSaveDocument() {
           UTI: mimeType,
         });
 
-        toast.success('Download concluído!', `"${fileName}" está pronto.`);
+        toast.success(
+          'Exportação concluída!',
+          `"${fileName}" está pronto para salvar.`
+        );
         return true;
       } catch (err) {
         const message =

@@ -8,15 +8,17 @@ import folderHttpService from '../http/folderHttpService';
 import type { FolderOption } from '../types';
 
 export const folderListKeys = {
-  all: (provider: string) => ['folders', provider] as const,
+  all: (provider: string, folderPath: string) =>
+    ['folders', provider, folderPath] as const,
 };
 
-export function useFolderList(provider: string) {
+export function useFolderList(provider: string, folderPath?: string) {
   return useQuery<FolderOption[]>({
-    queryKey: folderListKeys.all(provider),
+    queryKey: folderListKeys.all(provider, folderPath ?? ''),
     queryFn: async () => {
       const response = await folderHttpService.listFolders({
         provider: provider as StorageProvider,
+        folderPath,
       });
       if (isApiError(response)) throw new Error(response.message);
       return response.data.folders;

@@ -7,6 +7,12 @@ import { RefreshControl } from 'react-native-gesture-handler';
 
 import { AppContainer } from '@/components/base/AppContainer';
 import { AppText } from '@/components/base/AppText';
+import DocumentCard from '@/components/shared/DocumentCard';
+import { DocumentCardSkeleton } from '@/components/shared/DocumentCardSkeleton';
+import { useDownloadDocument } from '@/features/document/hooks/useDownloadDocument';
+import { useFindDocumentsByFolder } from '@/features/document/hooks/useFindDocumentsByFolder';
+import { useRefreshThumbnail } from '@/features/document/hooks/useRefreshThumbnail';
+import { useViewOriginal } from '@/features/document/hooks/useViewOriginal';
 import { StorageProvider } from '@/features/document/types';
 import { useAppNavigation } from '@/hooks';
 
@@ -14,7 +20,6 @@ import { CreateFolderModal } from '../components/CreateFolderModal';
 import FolderCard from '../components/FolderCard';
 import { FolderGridSkeleton } from '../components/FolderGridSkeleton';
 import Header from '../components/Header';
-import { NewFolderCard } from '../components/NewFolderCard';
 import { useFolderList } from '../hooks/useFolderList';
 import { ROOT_FOLDER_PATH, type FolderOption } from '../types';
 
@@ -50,18 +55,61 @@ const EmptyState = ({ onCreateFolder }: { onCreateFolder?: () => void }) => (
   </AppContainer>
 );
 
+const DocumentsSkeleton = () => (
+  <View className="gap-sm">
+    {Array.from({ length: 2 }).map((_, index) => (
+      <DocumentCardSkeleton key={index} />
+    ))}
+  </View>
+);
+
+const SectionHeader = ({ title, count }: { title: string; count: number }) => (
+  <AppContainer
+    direction="row"
+    justifyContent="space-between"
+    alignItems="center"
+    paddingHorizontal="2xl"
+    paddingVertical="none"
+    className="pt-2xl pb-sm"
+  >
+    <AppText variant="h5" color="default">
+      {title}
+    </AppText>
+    <AppText variant="bodySmall" color="muted">
+      {count === 1 ? '1 item' : `${count} itens`}
+    </AppText>
+  </AppContainer>
+);
+
 const FolderListScreen = () => {
   const navigation = useAppNavigation();
   const tabBarHeight = useBottomTabBarHeight();
   const [createModalVisible, setCreateModalVisible] = useState(false);
 
-  // TODO: tornar dinâmico por provider quando o seletor de provider for implementado
   const {
     data: folders = [],
-    isLoading,
+    isLoading: isLoadingFolders,
     isRefetching,
-    refetch,
-  } = useFolderList(StorageProvider.sharepoint);
+    refetch: refetchFolders,
+  } = useFolderList(StorageProvider.sharepoint, ROOT_FOLDER_PATH);
+
+  const {
+    data: documents = [],
+    isLoading: isLoadingDocuments,
+    refetch: refetchDocuments,
+  } = useFindDocumentsByFolder(ROOT_FOLDER_PATH);
+
+  const refreshThumbnail = useRefreshThumbnail();
+  const viewOriginal = useViewOriginal();
+  const { download, downloadingId } = useDownloadDocument();
+
+  const isEmpty =
+    !isLoadingFolders &&
+    !isLoadingDocuments &&
+    folders.length === 0 &&
+    documents.length === 0;
+
+  const hasOddGrid = (folders.length + 1) % 2 !== 0;
 
   const handleBack = () => {
     if (navigation.canGoBack()) navigation.goBack();
@@ -86,6 +134,11 @@ const FolderListScreen = () => {
     });
   };
 
+  const handleRefresh = () => {
+    refetchFolders();
+    refetchDocuments();
+  };
+
   return (
     <AppContainer
       flex
@@ -95,58 +148,84 @@ const FolderListScreen = () => {
     >
       <Header onBack={handleBack} onCreateFolder={handleCreateFolder} />
 
-      {isLoading ? (
+      {isLoadingFolders ? (
         <FolderGridSkeleton />
-      ) : folders.length === 0 ? (
+      ) : isEmpty ? (
         <EmptyState onCreateFolder={handleCreateFolder} />
       ) : (
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: tabBarHeight + 32 }}
           refreshControl={
-            <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
+            <RefreshControl
+              refreshing={isRefetching}
+              onRefresh={handleRefresh}
+            />
           }
           className="w-full"
         >
-          <AppContainer
-            direction="row"
-            justifyContent="space-between"
-            alignItems="center"
-            paddingHorizontal="2xl"
-            paddingVertical="none"
-            className="pt-2xl pb-sm"
-          >
-            <AppText variant="h5" color="default">
-              {folders.length === 1 ? '1 pasta' : `${folders.length} pastas`}
-            </AppText>
-          </AppContainer>
+          {folders.length > 0 && (
+            <>
+              <SectionHeader title="Pastas" count={folders.length} />
+              <AppContainer
+                direction="row"
+                wrap
+                spacing="sm"
+                paddingHorizontal="2xl"
+                paddingVertical="none"
+              >
+                {folders.map(folder => (
+                  <View key={folder.id} className="flex-1 min-w-[45%]">
+                    <FolderCard
+                      name={folder.name}
+                      onPress={() => handleOpenFolder(folder)}
+                    />
+                  </View>
+                ))}
 
-          <AppContainer
-            direction="row"
-            wrap
-            spacing="sm"
-            paddingHorizontal="2xl"
-            paddingVertical="none"
-          >
-            {folders.map(folder => (
-              <View key={folder.id} className="flex-1 min-w-[45%]">
-                <FolderCard
-                  name={folder.name}
-                  onPress={() => handleOpenFolder(folder)}
-                />
-              </View>
-            ))}
+                {hasOddGrid && <View className="flex-1 min-w-[45%]" />}
+              </AppContainer>
+            </>
+          )}
 
-            <View className="flex-1 min-w-[45%]">
-              <NewFolderCard onPress={handleCreateFolder} />
-            </View>
-
-            {(folders.length + 1) % 2 !== 0 && (
-              <View className="flex-1 min-w-[45%]" />
-            )}
-          </AppContainer>
+          {isLoadingDocuments ? (
+            <>
+              <AppContainer paddingHorizontal="2xl" paddingVertical="none">
+                <DocumentsSkeleton />
+              </AppContainer>
+            </>
+          ) : (
+            documents.length > 0 && (
+              <>
+                <SectionHeader title="Documentos" count={documents.length} />
+                <AppContainer
+                  paddingHorizontal="2xl"
+                  paddingVertical="none"
+                  spacing="sm"
+                >
+                  {documents.map(document => (
+                    <DocumentCard
+                      key={document.id}
+                      document={document}
+                      onThumbnailRefresh={refreshThumbnail}
+                      onViewOriginal={() => viewOriginal(document.storageUrl)}
+                      onDownload={() =>
+                        download(
+                          document.id,
+                          document.fileMetadata?.originalFileName ??
+                            document.title
+                        )
+                      }
+                      isDownloading={downloadingId === document.id}
+                    />
+                  ))}
+                </AppContainer>
+              </>
+            )
+          )}
         </ScrollView>
       )}
+
       <CreateFolderModal
         visible={createModalVisible}
         provider={StorageProvider.sharepoint}

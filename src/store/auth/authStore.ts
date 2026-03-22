@@ -56,11 +56,8 @@ export const useAuthStore = create<AuthStore>()(set => ({
         name,
         password,
       });
-      await Promise.all([
-        setAuthToken(data.accessToken),
-        setAuthUser(data.user),
-      ]);
-      set({ user: data.user, token: data.accessToken, isAuthenticated: true });
+      await Promise.all([setAuthToken(data.accessToken), setAuthUser(data)]);
+      set({ user: data, token: data.accessToken, isAuthenticated: true });
     } finally {
       set({ isLoading: false });
     }

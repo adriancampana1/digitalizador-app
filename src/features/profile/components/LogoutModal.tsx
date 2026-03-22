@@ -1,6 +1,13 @@
 import { useEffect, useMemo } from 'react';
 
-import { Animated, Dimensions, Modal, Pressable, View } from 'react-native';
+import {
+  Animated,
+  Dimensions,
+  Easing,
+  Modal,
+  Pressable,
+  View,
+} from 'react-native';
 
 import { LogOut, X } from 'lucide-react-native';
 
@@ -30,16 +37,17 @@ export const LogoutModal = ({
   useEffect(() => {
     if (visible) {
       slideAnim.setValue(windowHeight);
-      Animated.spring(slideAnim, {
+      Animated.timing(slideAnim, {
         toValue: 0,
-        damping: 20,
-        stiffness: 200,
+        duration: 260,
+        easing: Easing.out(Easing.cubic),
         useNativeDriver: true,
       }).start();
     } else {
       Animated.timing(slideAnim, {
         toValue: windowHeight,
-        duration: 220,
+        duration: 200,
+        easing: Easing.in(Easing.cubic),
         useNativeDriver: true,
       }).start();
     }
@@ -59,47 +67,60 @@ export const LogoutModal = ({
       onRequestClose={handleClose}
     >
       <Pressable
-        className="flex-1 bg-black/50 justify-end"
+        className="flex-1 justify-end bg-black/45"
         onPress={handleClose}
       >
         <Animated.View
           style={{ transform: [{ translateY: slideAnim }] }}
-          className="bg-background-card rounded-t-3xl overflow-hidden"
+          className="overflow-hidden rounded-t-3xl border-t border-typography-100 bg-background-card"
         >
           <Pressable>
             <View className="items-center pt-3 pb-1">
               <View className="w-10 h-1 rounded-full bg-typography-200" />
             </View>
 
-            <View className="px-6 pt-4 pb-10">
-              <View className="flex-row items-center justify-between mb-6">
-                <AppText variant="h5" bold>
+            <View className="px-6 pb-10 pt-4">
+              <View className="mb-1 items-start">
+                <AppText variant="caption" color="muted" className="px-1">
+                  Confirmação
+                </AppText>
+              </View>
+
+              <View className="mb-5 flex-row items-center justify-between">
+                <AppText variant="h5" color="default" bold>
                   Sair da conta
                 </AppText>
 
                 <Pressable
                   onPress={handleClose}
                   disabled={isLoading}
-                  className="w-11 h-11 rounded-full bg-gray-100 items-center justify-center"
+                  className="h-10 w-10 items-center justify-center rounded-full border border-typography-100 bg-background-light"
                   hitSlop={{ top: 4, bottom: 4, left: 8, right: 8 }}
                   style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
                   accessibilityRole="button"
                   accessibilityLabel="Fechar modal"
                 >
-                  <X size={18} color={colors.typography[400]} />
+                  <X size={16} color={colors.typography[500]} />
                 </Pressable>
               </View>
 
-              <View className="items-center mb-8">
-                <View className="w-16 h-16 rounded-full bg-error-50 items-center justify-center mb-5">
-                  <LogOut size={28} color={colors.error[500]} />
+              <View className="mb-8 rounded-2xl border border-error-100 bg-error-50/40 px-4 py-4">
+                <View className="mb-4 h-12 w-12 items-center justify-center rounded-full bg-error-50">
+                  <LogOut size={22} color={colors.error[500]} />
                 </View>
 
                 <AppText
-                  variant="body"
+                  variant="bodyLarge"
+                  color="default"
+                  className="font-semibold"
+                >
+                  Deseja realmente sair?
+                </AppText>
+
+                <AppText
+                  variant="bodySmall"
                   color="muted"
-                  align="center"
-                  className="leading-relaxed"
+                  className="mt-1 leading-relaxed"
                 >
                   Sua sessão será encerrada neste dispositivo.{'\n'}
                   Você precisará fazer login novamente para acessar o app.
@@ -111,6 +132,7 @@ export const LogoutModal = ({
                   title="Cancelar"
                   fullWidth
                   variant="outline"
+                  action="secondary"
                   onPress={handleClose}
                   isDisabled={isLoading}
                 />
@@ -119,11 +141,11 @@ export const LogoutModal = ({
                   title="Sair"
                   fullWidth
                   variant="solid"
+                  action="negative"
                   isLoading={isLoading}
                   loadingText="Saindo…"
                   onPress={onConfirm}
                   isDisabled={isLoading}
-                  className="bg-error-500"
                 />
               </View>
             </View>

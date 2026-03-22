@@ -44,6 +44,10 @@ export interface DocumentSearchRequest {
   searchText: string;
 }
 
+export interface DocumentsByFolderRequest {
+  folderPath: string;
+}
+
 export interface DocumentDownloadResult {
   blob: Blob;
   fileName: string;
@@ -64,6 +68,10 @@ export interface DocumentHttpServiceType {
   ): Promise<ApiResponse<DocumentResponse[]> | ApiError>;
 
   findAllDocuments(): Promise<ApiResponse<DocumentResponse[]> | ApiError>;
+
+  findDocumentsByFolder(
+    request: DocumentsByFolderRequest
+  ): Promise<ApiResponse<DocumentResponse[]> | ApiError>;
 
   downloadDocument(documentId: string): Promise<ApiResponse<Blob> | ApiError>;
 }

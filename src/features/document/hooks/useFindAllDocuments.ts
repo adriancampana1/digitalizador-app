@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import { isApiError } from '@/utils/api';
 
-import documentService from '../http/document.service';
+import documentHttpService from '../http/document.http.service';
 
 import type { DocumentResponse } from '../types';
 
@@ -15,7 +15,7 @@ export function useFindAllDocuments() {
   return useQuery<DocumentResponse[]>({
     queryKey: findAllDocumentKeys.all,
     queryFn: async () => {
-      const response = await documentService.findAllDocuments();
+      const response = await documentHttpService.findAllDocuments();
       if (isApiError(response)) throw new Error(response.message);
       return response.data;
     },

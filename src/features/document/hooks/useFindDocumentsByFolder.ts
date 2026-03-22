@@ -6,23 +6,20 @@ import documentHttpService from '../http/document.http.service';
 
 import type { DocumentResponse } from '../types';
 
-export const searchDocumentKeys = {
-  byText: (searchText: string) => ['documents', 'search', searchText] as const,
+export const documentsByFolderKeys = {
+  all: (folderPath: string) => ['documents', 'folder', folderPath] as const,
 };
 
-export function useSearchDocuments(searchText: string) {
+export function useFindDocumentsByFolder(folderPath: string) {
   return useQuery<DocumentResponse[]>({
-    queryKey: searchDocumentKeys.byText(searchText),
+    queryKey: documentsByFolderKeys.all(folderPath),
     queryFn: async () => {
-      const response = await documentHttpService.searchDocuments({
-        searchText,
+      const response = await documentHttpService.findDocumentsByFolder({
+        folderPath,
       });
-
       if (isApiError(response)) throw new Error(response.message);
-
       return response.data;
     },
-    enabled: searchText.trim().length > 0,
-    staleTime: 1000 * 30,
+    enabled: !!folderPath,
   });
 }

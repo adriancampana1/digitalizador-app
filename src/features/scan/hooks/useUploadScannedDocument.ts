@@ -3,7 +3,7 @@ import { useCallback, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 
 import { findAllDocumentKeys } from '@/features/document/hooks/useFindAllDocuments';
-import documentService from '@/features/document/http/document.service';
+import documentHttpService from '@/features/document/http/document.http.service';
 import type { StorageProvider } from '@/features/document/types';
 import { useAppToast } from '@/hooks';
 import { isApiError } from '@/utils/api';
@@ -13,7 +13,7 @@ import { resolveDocumentName } from '../utils/scanUtils';
 
 import type { ScannedPage } from '../types';
 
-type UploadScannedDocumentInput = {
+export type UploadScannedDocumentInput = {
   pages: ScannedPage[];
   documentName: string;
   storageProvider: StorageProvider;
@@ -55,7 +55,7 @@ export function useUploadScannedDocument() {
           fileUri = page.uri;
         }
 
-        const response = await documentService.uploadDocument({
+        const response = await documentHttpService.uploadDocument({
           file: {
             uri: fileUri,
             name: fileName,
