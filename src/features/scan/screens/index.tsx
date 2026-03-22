@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import { View } from 'react-native';
 
-import { useAppNavigation, useAppToast } from '@/hooks';
+import { useAppNavigation } from '@/hooks';
 
 import { SaveDocumentModal } from '../components/SaveDocumentModal';
 import { useDocumentScanner } from '../hooks/useDocumentScanner';
@@ -19,7 +19,6 @@ const ScanScreen = () => {
 
   const { upload, isLoading: isUploading } = useUploadScannedDocument();
   const { save, isLoading: isSaving } = useLocalSaveDocument();
-  const toast = useAppToast();
 
   // Rastreia o status anterior para distinguir "idle inicial"
   // de "idle pós-cancelamento" (o hook volta para idle ao cancelar).
@@ -55,7 +54,6 @@ const ScanScreen = () => {
 
   const handleSaveSuccess = () => {
     reset();
-    toast.success('Download concluído!', `"O documento está pronto.`);
     navigation.goBack();
   };
 

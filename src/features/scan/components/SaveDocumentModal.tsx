@@ -19,8 +19,6 @@ import { AppText } from '@/components/base/AppText';
 import { StorageProvider } from '@/features/document/types';
 import { FolderPickerModal } from '@/features/folder/components/FolderPickerModal';
 
-import { generateDocumentName } from '../utils/scanUtils';
-
 import type { LocalSaveInput } from '../hooks/useLocalSaveDocument';
 import type { UploadScannedDocumentInput } from '../hooks/useUploadScannedDocument';
 import type { OutputFormat, SaveDestinationType, ScannedPage } from '../types';
@@ -235,8 +233,6 @@ export const SaveDocumentModal = ({
     }
   };
 
-  const placeholder = generateDocumentName();
-
   return (
     <>
       <Modal
@@ -289,15 +285,17 @@ export const SaveDocumentModal = ({
                   showsVerticalScrollIndicator={false}
                   keyboardShouldPersistTaps="handled"
                 >
-                  <AppText variant="label" bold className="mb-2">
-                    Nome do documento
-                  </AppText>
-                  <AppInput
-                    value={documentName}
-                    onChangeText={setDocumentName}
-                    placeholder={placeholder}
-                    helperText="Deixe em branco para usar o nome gerado automaticamente."
-                  />
+                  <>
+                    <AppText variant="label" bold className="mb-2">
+                      Nome do documento
+                    </AppText>
+                    <AppInput
+                      value={documentName}
+                      onChangeText={setDocumentName}
+                      placeholder={'Ata da reunião'}
+                      helperText="Deixe em branco para usar o nome gerado automaticamente."
+                    />
+                  </>
 
                   <AppSpacer size="xl" />
 

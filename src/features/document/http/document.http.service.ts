@@ -14,7 +14,7 @@ import type {
 class DocumentHttpService implements DocumentHttpServiceType {
   async uploadDocument(
     request: CreateDocumentRequest
-  ): Promise<ApiResponse<DocumentResponse> | ApiError> {
+  ): Promise<ApiResponse<DocumentResponse[]> | ApiError> {
     const formData = createUploadFormData(request);
 
     return apiClient.post('/document', formData, {

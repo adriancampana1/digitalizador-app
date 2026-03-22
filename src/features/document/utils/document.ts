@@ -79,13 +79,18 @@ export function getFileExtension(fileName: string): string {
 export function createUploadFormData(request: CreateDocumentRequest): FormData {
   const formData = new FormData();
 
-  formData.append('file', {
-    uri: request.file.uri,
-    name: request.file.name,
-    type: request.file.type,
-  } as unknown as Blob);
+  request.files.forEach(file => {
+    formData.append('files', {
+      uri: file.uri,
+      name: file.name,
+      type: file.type,
+    } as unknown as Blob);
+  });
 
-  formData.append('title', request.title);
+  if (request.title) {
+    formData.append('title', request.title);
+  }
+
   formData.append('storageProvider', request.storageProvider);
   formData.append('documentType', request.documentType);
 

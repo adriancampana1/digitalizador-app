@@ -29,12 +29,12 @@ export interface FileMetadata {
 }
 
 export interface CreateDocumentRequest {
-  file: {
+  files: Array<{
     uri: string;
     name: string;
     type: string;
-  };
-  title: string;
+  }>;
+  title?: string;
   storageProvider: StorageProvider;
   documentType: string;
   folderPath?: string;
@@ -57,7 +57,7 @@ export interface DocumentDownloadResult {
 export interface DocumentHttpServiceType {
   uploadDocument(
     request: CreateDocumentRequest
-  ): Promise<ApiResponse<DocumentResponse> | ApiError>;
+  ): Promise<ApiResponse<DocumentResponse[]> | ApiError>;
 
   refreshThumbnail(
     documentId: string
