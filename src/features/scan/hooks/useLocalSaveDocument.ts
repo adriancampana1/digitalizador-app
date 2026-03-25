@@ -6,7 +6,6 @@ import * as Sharing from 'expo-sharing';
 import { useAppToast } from '@/hooks';
 
 import { convertPagesToPdf } from '../utils/pdfUtils';
-import { resolveDocumentName } from '../utils/scanUtils';
 
 import type { ScannedPage } from '../types';
 
@@ -31,11 +30,10 @@ export function useLocalSaveDocument() {
       setIsLoading(true);
 
       try {
-        const resolvedName = resolveDocumentName(documentName);
         const extension = outputFormat === 'pdf' ? 'pdf' : 'jpg';
         const mimeType =
           outputFormat === 'pdf' ? 'application/pdf' : 'image/jpeg';
-        const fileName = `${resolvedName}.${extension}`;
+        const fileName = `${documentName}.${extension}`;
 
         const canShare = await Sharing.isAvailableAsync();
 

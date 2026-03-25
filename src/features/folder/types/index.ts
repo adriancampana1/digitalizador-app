@@ -18,16 +18,3 @@ export interface ListFoldersResponse {
   provider: StorageProvider;
   folders: FolderOption[];
 }
-
-export type CreateFolderRequest = {
-  provider: StorageProvider;
-  parentFolderPath: string;
-  folderName: string;
-};
-
-export type CreateFolderResponse = {
-  storageItemId: string;
-  folderUrl: string;
-  folderName: string;
-  storageProvider: StorageProvider;
-};

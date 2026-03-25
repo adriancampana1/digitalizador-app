@@ -1,6 +1,4 @@
-import { useState } from 'react';
-
-import { Pressable, ScrollView, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { RefreshControl } from 'react-native-gesture-handler';
@@ -16,14 +14,13 @@ import { useViewOriginal } from '@/features/document/hooks/useViewOriginal';
 import { StorageProvider } from '@/features/document/types';
 import { useAppNavigation } from '@/hooks';
 
-import { CreateFolderModal } from '../components/CreateFolderModal';
 import FolderCard from '../components/FolderCard';
 import { FolderGridSkeleton } from '../components/FolderGridSkeleton';
 import Header from '../components/Header';
 import { useFolderList } from '../hooks/useFolderList';
 import { ROOT_FOLDER_PATH, type FolderOption } from '../types';
 
-const EmptyState = ({ onCreateFolder }: { onCreateFolder?: () => void }) => (
+const EmptyState = () => (
   <AppContainer
     flex
     justifyContent="center"
@@ -41,17 +38,6 @@ const EmptyState = ({ onCreateFolder }: { onCreateFolder?: () => void }) => (
     <AppText variant="body" color="muted" align="center">
       Organize seus documentos criando sua primeira pasta.
     </AppText>
-    {onCreateFolder && (
-      <Pressable
-        onPress={onCreateFolder}
-        className="mt-sm px-lg py-md rounded-xl bg-background-dark"
-        style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
-      >
-        <AppText variant="bodySmall" color="inverted" bold>
-          Criar pasta
-        </AppText>
-      </Pressable>
-    )}
   </AppContainer>
 );
 
@@ -84,7 +70,6 @@ const SectionHeader = ({ title, count }: { title: string; count: number }) => (
 const FolderListScreen = () => {
   const navigation = useAppNavigation();
   const tabBarHeight = useBottomTabBarHeight();
-  const [createModalVisible, setCreateModalVisible] = useState(false);
 
   const {
     data: folders = [],
@@ -115,8 +100,6 @@ const FolderListScreen = () => {
     if (navigation.canGoBack()) navigation.goBack();
   };
 
-  const handleCreateFolder = () => setCreateModalVisible(true);
-
   const handleOpenFolder = (folder: FolderOption) => {
     navigation.navigate('App', {
       screen: 'AppTabs',
@@ -146,12 +129,12 @@ const FolderListScreen = () => {
       paddingHorizontal="none"
       paddingVertical="none"
     >
-      <Header onBack={handleBack} onCreateFolder={handleCreateFolder} />
+      <Header onBack={handleBack} />
 
       {isLoadingFolders ? (
         <FolderGridSkeleton />
       ) : isEmpty ? (
-        <EmptyState onCreateFolder={handleCreateFolder} />
+        <EmptyState />
       ) : (
         <ScrollView
           showsVerticalScrollIndicator={false}
@@ -225,13 +208,6 @@ const FolderListScreen = () => {
           )}
         </ScrollView>
       )}
-
-      <CreateFolderModal
-        visible={createModalVisible}
-        provider={StorageProvider.sharepoint}
-        folderPath={ROOT_FOLDER_PATH}
-        onClose={() => setCreateModalVisible(false)}
-      />
     </AppContainer>
   );
 };

@@ -1,6 +1,4 @@
-import { useState } from 'react';
-
-import { Pressable, ScrollView, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { RefreshControl } from 'react-native-gesture-handler';
@@ -18,7 +16,6 @@ import { StorageProvider } from '@/features/document/types';
 import { useAppNavigation } from '@/hooks';
 import type { FolderStackParamList } from '@/navigation';
 
-import { CreateFolderModal } from '../components/CreateFolderModal';
 import FolderCard from '../components/FolderCard';
 import { FolderGridSkeleton } from '../components/FolderGridSkeleton';
 import Header from '../components/Header';
@@ -26,11 +23,7 @@ import { useFolders } from '../hooks/useFolders';
 
 import type { StackScreenProps } from '@react-navigation/stack';
 
-const FolderDetailEmptyState = ({
-  onCreateFolder,
-}: {
-  onCreateFolder?: () => void;
-}) => (
+const FolderDetailEmptyState = () => (
   <AppContainer
     flex
     justifyContent="center"
@@ -46,19 +39,8 @@ const FolderDetailEmptyState = ({
       Esta pasta está vazia
     </AppText>
     <AppText variant="body" color="muted" align="center">
-      Crie subpastas ou digitalize documentos para começar.
+      Digitalize documentos para começar.
     </AppText>
-    {onCreateFolder && (
-      <Pressable
-        onPress={onCreateFolder}
-        className="mt-sm px-lg py-md rounded-xl bg-background-dark"
-        style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
-      >
-        <AppText variant="bodySmall" color="inverted" bold>
-          Criar subpasta
-        </AppText>
-      </Pressable>
-    )}
   </AppContainer>
 );
 
@@ -79,7 +61,6 @@ const FolderDetailScreen = ({ route }: FolderDetailScreenRouteProp) => {
   const navigation = useAppNavigation();
   const { folderName, folderPath } = route.params;
   const tabBarHeight = useBottomTabBarHeight();
-  const [createModalVisible, setCreateModalVisible] = useState(false);
 
   const {
     data: subfolders = [],
@@ -106,8 +87,6 @@ const FolderDetailScreen = ({ route }: FolderDetailScreenRouteProp) => {
   const handleBack = () => {
     if (navigation.canGoBack()) navigation.goBack();
   };
-
-  const handleCreateFolder = () => setCreateModalVisible(true);
 
   const handleOpenFolder = (
     subfolderId: string,
@@ -142,16 +121,12 @@ const FolderDetailScreen = ({ route }: FolderDetailScreenRouteProp) => {
       paddingHorizontal="none"
       paddingVertical="none"
     >
-      <Header
-        title={folderName}
-        onBack={handleBack}
-        onCreateFolder={handleCreateFolder}
-      />
+      <Header title={folderName} onBack={handleBack} />
 
       {isLoadingFolders ? (
         <FolderGridSkeleton />
       ) : isEmpty ? (
-        <FolderDetailEmptyState onCreateFolder={handleCreateFolder} />
+        <FolderDetailEmptyState />
       ) : (
         <ScrollView
           showsVerticalScrollIndicator={false}
@@ -238,13 +213,6 @@ const FolderDetailScreen = ({ route }: FolderDetailScreenRouteProp) => {
           )}
         </ScrollView>
       )}
-
-      <CreateFolderModal
-        visible={createModalVisible}
-        provider={StorageProvider.sharepoint}
-        folderPath={folderPath}
-        onClose={() => setCreateModalVisible(false)}
-      />
     </AppContainer>
   );
 };
