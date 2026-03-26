@@ -22,13 +22,14 @@ const RegisterScreen = () => {
   const { value: maskedPhone, rawValue: phone, applyMask } = usePhoneMask();
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
+  const [accessCode, setAccessCode] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
   const navigation = useAppNavigation();
 
   const handleRegister = async () => {
     try {
-      await register(phone, name, password);
+      await register(phone, name, password, accessCode);
     } catch (err) {
       if (isApiError(err)) {
         showError(err.message);
@@ -88,6 +89,14 @@ const RegisterScreen = () => {
               spacing="md"
               backgroundColor="background-light"
             >
+              <AppInput
+                label="Código de acesso"
+                placeholder="Ex: CCB-4X7K"
+                value={accessCode}
+                onChangeText={text => setAccessCode(text.toUpperCase())}
+                keyboardType="default"
+                autoCapitalize="characters"
+              />
               <AppInput
                 label="Telefone"
                 placeholder="(99) 99999-9999"
