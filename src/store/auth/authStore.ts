@@ -48,13 +48,14 @@ export const useAuthStore = create<AuthStore>()(set => ({
     }
   },
 
-  register: async (phone, name, password) => {
+  register: async (phone, name, password, accessCode) => {
     set({ isLoading: true });
     try {
       const { data } = await apiClient.post('/auth/register', {
         phone,
         name,
         password,
+        accessCode,
       });
       await Promise.all([setAuthToken(data.accessToken), setAuthUser(data)]);
       set({ user: data, token: data.accessToken, isAuthenticated: true });

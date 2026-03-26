@@ -4,6 +4,8 @@ export interface AuthResponse {
   accessToken: string;
   name: string;
   phone: string;
+  tenantId: string | null;
+  role: 'MASTER' | 'USER';
   createdAt: string;
   updatedAt: string;
 }
@@ -14,6 +16,8 @@ export interface User {
   password: string;
   name: string;
   status: string;
+  tenantId: string | null;
+  role: 'MASTER' | 'USER';
   createdAt: string;
   updatedAt: string;
 }
@@ -26,6 +30,7 @@ export interface AuthHttpServicePropsType {
   register(
     phone: string,
     password: string,
-    name: string
-  ): Promise<ApiResponse<User> | ApiError>;
+    name: string,
+    accessCode: string
+  ): Promise<ApiResponse<AuthResponse> | ApiError>;
 }

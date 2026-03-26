@@ -10,7 +10,12 @@ export type AuthState = {
 export type AuthActions = {
   rehydrate: () => Promise<void>;
   login: (phone: string, password: string) => Promise<void>;
-  register: (phone: string, name: string, password: string) => Promise<void>;
+  register: (
+    phone: string,
+    name: string,
+    password: string,
+    accessCode: string
+  ) => Promise<void>;
   logout: () => void;
 };
 
