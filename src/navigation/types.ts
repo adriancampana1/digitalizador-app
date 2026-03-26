@@ -37,6 +37,7 @@ export type AppStackParamList = {
 export type RootStackParamList = {
   Auth: NavigatorScreenParams<AuthStackParamList>;
   App: NavigatorScreenParams<AppStackParamList>;
+  SetupTenant: undefined;
 };
 
 export type AuthScreenProps<T extends keyof AuthStackParamList> =
