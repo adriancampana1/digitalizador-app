@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
-import { ArrowLeft, ChevronRight, LogOut } from 'lucide-react-native';
+import { ArrowLeft, ChevronRight, LogOut, Settings } from 'lucide-react-native';
 
 import { AppContainer } from '@/components/base/AppContainer';
 import { AppText } from '@/components/base/AppText';
@@ -194,6 +194,39 @@ const ProfileScreen = () => {
               </AppText>
             </View>
           </View>
+
+          {user?.role === 'MASTER' && (
+            <View className="mt-lg w-full gap-sm">
+              <AppText variant="label" color="muted" className="px-1">
+                Administração
+              </AppText>
+
+              <View className="w-full rounded-2xl border border-typography-100 bg-background-card px-5 py-4 gap-3">
+                <AppText variant="bodyLarge" className="font-semibold">
+                  Código de acesso
+                </AppText>
+                <AppText variant="body" color="muted">
+                  Compartilhe este código com os usuários da sua instituição
+                  para que possam se registrar.
+                </AppText>
+
+                <ProfileActionRow
+                  title="Gerenciar ambiente"
+                  description="Ver código, atualizar credenciais"
+                  onPress={() => {
+                    /* Navegar para tela de gestão — expansão futura */
+                  }}
+                  icon={<Settings size={19} color={colors.typography[500]} />}
+                  disabled
+                  trailing={
+                    <AppText variant="caption" color="muted">
+                      Em breve
+                    </AppText>
+                  }
+                />
+              </View>
+            </View>
+          )}
 
           <View className="mt-lg w-full gap-sm">
             <AppText variant="label" color="muted" className="px-1">
