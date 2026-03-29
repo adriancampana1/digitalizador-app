@@ -1,3 +1,5 @@
+import { Alert } from 'react-native';
+
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 
@@ -8,6 +10,8 @@ import HomeScreen from '@/features/home/screens/HomeScreen';
 import ProfileScreen from '@/features/profile/screens';
 import ScanScreen from '@/features/scan/screens';
 import SearchScreen from '@/features/search/screens/SearchScreen';
+import SetupTenantScreen from '@/features/tenant/screens/SetupTenantScreen';
+import { useAuthStore } from '@/store/auth/authStore';
 
 import FolderDetailScreen from '../features/folder/screens/FolderDetailScreen';
 
@@ -15,7 +19,7 @@ import type {
   AppStackParamList,
   AppTabParamList,
   FolderStackParamList,
-} from './types/types';
+} from './types';
 import type { StackNavigationProp } from '@react-navigation/stack';
 
 // ─── Stack Navigators ────────────────────────────────────────
@@ -59,6 +63,25 @@ const AppTabNavigator = () => {
         listeners={({ navigation }) => ({
           tabPress: e => {
             e.preventDefault();
+            const user = useAuthStore.getState().user;
+            const isViewOnly = user?.role === 'MASTER' && !user?.tenantId;
+            if (isViewOnly) {
+              Alert.alert(
+                'Ambiente não configurado',
+                'Configure o ambiente para digitalizar documentos.',
+                [
+                  { text: 'Cancelar', style: 'cancel' },
+                  {
+                    text: 'Configurar agora',
+                    onPress: () =>
+                      navigation
+                        .getParent<StackNavigationProp<AppStackParamList>>()
+                        ?.navigate('SetupEnvironment'),
+                  },
+                ]
+              );
+              return;
+            }
             navigation
               .getParent<StackNavigationProp<AppStackParamList>>()
               ?.navigate('ScanFlow');
@@ -88,6 +111,7 @@ const AppNavigator = () => (
         cardStyle: { backgroundColor: 'transparent' },
       }}
     />
+    <AppStack.Screen name="SetupEnvironment" component={SetupTenantScreen} />
   </AppStack.Navigator>
 );
 

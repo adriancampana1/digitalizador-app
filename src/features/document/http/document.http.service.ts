@@ -69,6 +69,10 @@ class DocumentHttpService implements DocumentHttpServiceType {
       },
     });
   }
+
+  async deleteDocument(documentId: string): Promise<void> {
+    await apiClient.delete(`/document/${documentId}`);
+  }
 }
 
 export default new DocumentHttpService();

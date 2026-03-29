@@ -16,25 +16,29 @@ const Header = ({ title, onBack }: HeaderProps) => {
     <AppContainer
       backgroundColor="background-card"
       variant="safeAreaView"
-      className="pt-6 rounded-br-3xl rounded-bl-3xl shadow-lg w-full"
+      paddingHorizontal="2xl"
+      paddingVertical="none"
+      className="w-full border-b border-typography-100 pb-4"
       direction="row"
       justifyContent="space-between"
       alignItems="center"
     >
       <Pressable
         onPress={onBack}
-        className="w-10 h-10 rounded-full bg-background-light items-center justify-center"
+        className="w-9 h-9 rounded-full bg-background-section items-center justify-center"
         hitSlop={8}
         style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1 })}
+        accessibilityRole="button"
+        accessibilityLabel="Voltar"
       >
-        <ArrowLeft size={20} color={colors.typography[700]} />
+        <ArrowLeft size={18} color={colors.typography[700]} />
       </Pressable>
 
-      <AppText variant="h3" className="leading-none">
+      <AppText variant="h5" color="default">
         {title || 'Pastas'}
       </AppText>
 
-      <View className="w-10 h-10" />
+      <View className="w-9 h-9" />
     </AppContainer>
   );
 };

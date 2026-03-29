@@ -1,6 +1,10 @@
 import { apiClient } from '@/api';
 
-import type { TenantSetupPayload, TenantSetupResponse } from '../types';
+import type {
+  TenantResponse,
+  TenantSetupPayload,
+  TenantSetupResponse,
+} from '../types';
 
 export const tenantHttpService = {
   setup: async (payload: TenantSetupPayload): Promise<TenantSetupResponse> => {
@@ -8,6 +12,11 @@ export const tenantHttpService = {
       '/tenant/setup',
       payload
     );
+    return data;
+  },
+
+  getMyTenant: async (): Promise<TenantResponse> => {
+    const { data } = await apiClient.get<TenantResponse>('/tenant/me');
     return data;
   },
 };

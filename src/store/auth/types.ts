@@ -5,6 +5,7 @@ export type AuthState = {
   token: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+  setupSkipped: boolean;
 };
 
 export type AuthActions = {
@@ -17,6 +18,8 @@ export type AuthActions = {
     accessCode: string
   ) => Promise<void>;
   logout: () => void;
+  skipSetup: () => void;
+  updateUser: (partial: Partial<User>) => Promise<void>;
 };
 
 export type AuthStore = AuthState & AuthActions;

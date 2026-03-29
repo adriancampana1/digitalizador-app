@@ -7,6 +7,17 @@ interface FolderHttpServicePropsType {
   listFolders: (
     request: ListFoldersRequest
   ) => Promise<ApiResponse<ListFoldersResponse> | ApiError>;
+  createFolder: (
+    storageProvider: string,
+    parentPath: string,
+    folderName: string
+  ) => Promise<void>;
+  deleteFolder: (storageProvider: string, itemId: string) => Promise<void>;
+  renameFolder: (
+    storageProvider: string,
+    itemId: string,
+    newName: string
+  ) => Promise<void>;
 }
 
 class FolderHttpService implements FolderHttpServicePropsType {
@@ -19,6 +30,32 @@ class FolderHttpService implements FolderHttpServicePropsType {
         folderPath: request.folderPath ?? '',
       },
     });
+  }
+
+  async createFolder(
+    storageProvider: string,
+    parentPath: string,
+    folderName: string
+  ): Promise<void> {
+    await apiClient.post('/folders', {
+      storageProvider,
+      parentPath,
+      folderName,
+    });
+  }
+
+  async deleteFolder(storageProvider: string, itemId: string): Promise<void> {
+    await apiClient.delete(`/folders/${itemId}`, {
+      params: { storageProvider },
+    });
+  }
+
+  async renameFolder(
+    storageProvider: string,
+    itemId: string,
+    newName: string
+  ): Promise<void> {
+    await apiClient.patch(`/folders/${itemId}`, { storageProvider, newName });
   }
 }
 

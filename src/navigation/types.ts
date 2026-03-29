@@ -24,7 +24,12 @@ export type DocumentStackParamList = {
 export type FolderStackParamList = {
   FolderList: undefined;
   FolderDetail: { folderId: string; folderName: string; folderPath: string };
-  FolderEdit: { folderId: string };
+  FolderEdit: {
+    itemId: string;
+    currentName: string;
+    storageProvider: string;
+    folderPath: string;
+  };
 };
 
 // AppStack: contém o AppTabNavigator e o ScanFlow (modal).
@@ -32,6 +37,7 @@ export type FolderStackParamList = {
 export type AppStackParamList = {
   AppTabs: NavigatorScreenParams<AppTabParamList>;
   ScanFlow: undefined;
+  SetupEnvironment: undefined;
 };
 
 export type RootStackParamList = {

@@ -33,6 +33,7 @@ export type DocumentCardProps = {
   onPress?: () => void;
   onThumbnailRefresh?: (id: string) => void;
   isDownloading?: boolean;
+  onDelete?: () => void;
 };
 
 const THUMBNAIL_WIDTH = 56;
@@ -115,6 +116,7 @@ const DocumentCard = ({
   onPress,
   onThumbnailRefresh,
   isDownloading,
+  onDelete,
 }: DocumentCardProps) => {
   const [menuVisible, setMenuVisible] = useState(false);
   const [menuPosition, setMenuPosition] = useState({ top: 0, right: 0 });
@@ -158,6 +160,15 @@ const DocumentCard = ({
             label: isDownloading ? 'Baixando...' : 'Fazer download',
             onPress: () => !isDownloading && handleMenuAction(onDownload),
             disabled: isDownloading,
+          },
+        ]
+      : []),
+    ...(onDelete
+      ? [
+          {
+            icon: 'trash-2' as const,
+            label: 'Excluir documento',
+            onPress: () => handleMenuAction(onDelete),
           },
         ]
       : []),

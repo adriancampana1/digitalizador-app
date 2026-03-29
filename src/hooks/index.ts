@@ -45,3 +45,8 @@ export { useFormValidation } from './useFormValidation';
  * Hook para gerenciar máscaras em input de telefone
  */
 export { usePhoneMask } from './usePhoneMask';
+
+/**
+ * Hook para verificar se o usuário está em modo somente leitura (ambiente não configurado)
+ */
+export { useViewOnlyMode } from './useViewOnlyMode';

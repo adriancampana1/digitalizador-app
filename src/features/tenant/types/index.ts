@@ -21,3 +21,12 @@ export interface TenantSetupResponse {
   accessCode: string;
   status: string;
 }
+
+export interface TenantResponse {
+  id: string;
+  name: string;
+  storageProvider: StorageProvider;
+  baseFolderPath?: string;
+  accessCode: string;
+  status: string;
+}

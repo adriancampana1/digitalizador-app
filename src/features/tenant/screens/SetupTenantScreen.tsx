@@ -1,21 +1,33 @@
 /* eslint-disable react-native/no-inline-styles */
 import { useState } from 'react';
 
-import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
+import {
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
+  View,
+} from 'react-native';
+
+import { useRoute } from '@react-navigation/native';
 
 import { AppButton } from '@/components/base/AppButton';
 import { AppContainer } from '@/components/base/AppContainer';
 import { AppInput } from '@/components/base/AppInput';
 import { AppSpacer } from '@/components/base/AppSpacer';
 import { AppText } from '@/components/base/AppText';
-import { useAppToast, useAuth } from '@/hooks';
+import { useAppNavigation, useAppToast, useAuth } from '@/hooks';
 import { isApiError } from '@/utils/api';
 
 import { tenantHttpService } from '../http/tenantHttpService';
 
 const SetupTenantScreen = () => {
-  const { logout } = useAuth();
+  const route = useRoute();
+  const navigation = useAppNavigation();
+  const { logout, skipSetup, updateUser } = useAuth();
   const { error: showError, success: showSuccess } = useAppToast();
+
+  const isInAppSetup = route.name === 'SetupEnvironment';
 
   const [institutionName, setInstitutionName] = useState('');
   const [baseFolderPath, setBaseFolderPath] = useState('');
@@ -25,6 +37,7 @@ const SetupTenantScreen = () => {
   const [driveId, setDriveId] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [accessCode, setAccessCode] = useState<string | null>(null);
+  const [setupTenantId, setSetupTenantId] = useState<string | null>(null);
 
   const handleSetup = async () => {
     if (!institutionName || !clientId || !tenantId || !secretKey || !driveId) {
@@ -40,6 +53,7 @@ const SetupTenantScreen = () => {
         credentials: { clientId, tenantId, secretKey, driveId },
       });
       setAccessCode(response.accessCode);
+      setSetupTenantId(response.tenantId);
       showSuccess('Ambiente configurado com sucesso!');
     } catch (err) {
       if (isApiError(err)) {
@@ -51,6 +65,18 @@ const SetupTenantScreen = () => {
       }
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleContinue = async () => {
+    if (setupTenantId) {
+      await updateUser({ tenantId: setupTenantId });
+      if (isInAppSetup) {
+        navigation.goBack();
+      }
+      // For gate flow: RootNavigator reacts to user.tenantId change automatically
+    } else {
+      await logout();
     }
   };
 
@@ -81,9 +107,7 @@ const SetupTenantScreen = () => {
           <AppButton
             title="Continuar para o app"
             fullWidth
-            onPress={async () => {
-              await logout();
-            }}
+            onPress={handleContinue}
             className="rounded-2xl"
           />
         </View>
@@ -105,8 +129,9 @@ const SetupTenantScreen = () => {
           flex
           backgroundColor="background-light"
           alignItems="stretch"
+          paddingVertical="3xl"
         >
-          <AppText variant="h2" color="primary-500">
+          <AppText variant="h2" color="primary-500" className="mt-8">
             Configurar ambiente
           </AppText>
           <AppSpacer size="xs" />
@@ -187,6 +212,19 @@ const SetupTenantScreen = () => {
             isDisabled={isLoading}
             className="rounded-2xl shadow-md"
           />
+
+          {!isInAppSetup && (
+            <Pressable
+              onPress={skipSetup}
+              className="mt-4 items-center py-2 active:opacity-60"
+              accessibilityRole="button"
+              accessibilityLabel="Configurar depois"
+            >
+              <AppText variant="body" color="muted">
+                Configurar depois
+              </AppText>
+            </Pressable>
+          )}
         </AppContainer>
       </ScrollView>
     </KeyboardAvoidingView>

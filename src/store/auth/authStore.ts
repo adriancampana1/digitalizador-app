@@ -11,11 +11,12 @@ import {
 
 import type { AuthStore } from './types';
 
-export const useAuthStore = create<AuthStore>()(set => ({
+export const useAuthStore = create<AuthStore>()((set, get) => ({
   user: null,
   isLoading: false,
   isAuthenticated: false,
   token: null,
+  setupSkipped: false,
 
   rehydrate: async () => {
     try {
@@ -41,6 +42,7 @@ export const useAuthStore = create<AuthStore>()(set => ({
         token: accessToken,
         isAuthenticated: true,
         isLoading: false,
+        setupSkipped: false,
       });
     } catch (error) {
       set({ isLoading: false });
@@ -58,7 +60,12 @@ export const useAuthStore = create<AuthStore>()(set => ({
         accessCode,
       });
       await Promise.all([setAuthToken(data.accessToken), setAuthUser(data)]);
-      set({ user: data, token: data.accessToken, isAuthenticated: true });
+      set({
+        user: data,
+        token: data.accessToken,
+        isAuthenticated: true,
+        setupSkipped: false,
+      });
     } finally {
       set({ isLoading: false });
     }
@@ -66,7 +73,23 @@ export const useAuthStore = create<AuthStore>()(set => ({
 
   logout: async () => {
     await Promise.all([clearAuthToken(), clearAuthUser()]);
-    set({ user: null, token: null, isAuthenticated: false });
+    set({
+      user: null,
+      token: null,
+      isAuthenticated: false,
+      setupSkipped: false,
+    });
+  },
+
+  skipSetup: () => set({ setupSkipped: true }),
+
+  updateUser: async partial => {
+    const current = get().user;
+    if (!current) return;
+    const updated = { ...current, ...partial };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await setAuthUser(updated as any);
+    set({ user: updated });
   },
 }));
 
