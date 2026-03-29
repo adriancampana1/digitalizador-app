@@ -57,7 +57,6 @@ const FolderEditScreen = ({ route }: Props) => {
         backgroundColor="background-card"
         variant="safeAreaView"
         paddingHorizontal="2xl"
-        paddingVertical="none"
         className="w-full border-b border-typography-100 pb-4"
         direction="row"
         justifyContent="space-between"
@@ -88,7 +87,7 @@ const FolderEditScreen = ({ route }: Props) => {
         paddingHorizontal="2xl"
         paddingVertical="none"
         alignItems="stretch"
-        className="pt-2xl"
+        className="pt-2xl w-full"
       >
         <AppInput label="Nome da pasta *" value={name} onChangeText={setName} />
         <AppSpacer size="xl" />

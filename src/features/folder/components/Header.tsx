@@ -17,7 +17,6 @@ const Header = ({ title, onBack }: HeaderProps) => {
       backgroundColor="background-card"
       variant="safeAreaView"
       paddingHorizontal="2xl"
-      paddingVertical="none"
       className="w-full border-b border-typography-100 pb-4"
       direction="row"
       justifyContent="space-between"

@@ -40,11 +40,11 @@ const SearchInitialState = () => (
     paddingVertical="none"
     backgroundColor="background-light"
   >
-    <View className="w-16 h-16 rounded-full bg-background-card items-center justify-center">
-      <SearchIcon size={28} color={colors.typography[300]} />
+    <View className="w-16 h-16 rounded-2xl bg-background-section items-center justify-center mb-xs">
+      <SearchIcon size={28} color={colors.typography[400]} />
     </View>
 
-    <AppText variant="h4" align="center" color="default">
+    <AppText variant="h5" align="center" color="default">
       Comece sua busca
     </AppText>
 
@@ -62,18 +62,21 @@ const SearchEmptyState = ({ searchText }: { searchText: string }) => (
     spacing="sm"
     paddingHorizontal="2xl"
     paddingVertical="none"
-    className="-mt-16"
   >
-    <View className="w-20 h-20 rounded-full bg-background-card items-center justify-center">
-      <SearchIcon size={32} color={colors.typography[300]} />
+    <View className="w-16 h-16 rounded-2xl bg-background-section items-center justify-center mb-xs">
+      <SearchIcon size={26} color={colors.typography[400]} />
     </View>
 
     <AppText variant="h5" align="center" color="default">
-      Nenhum resultado encontrado
+      Nenhum resultado
     </AppText>
 
-    <AppText variant="body" align="center" color="muted">
-      Tente buscar por outro termo para “{searchText}”.
+    <AppText variant="bodySmall" align="center" color="muted">
+      Não encontramos documentos para{' '}
+      <AppText variant="bodySmall" color="default" bold>
+        {searchText}
+      </AppText>
+      . Tente outros termos.
     </AppText>
   </AppContainer>
 );
@@ -139,7 +142,10 @@ const SearchScreen = () => {
       <AppContainer
         backgroundColor="background-card"
         variant="safeAreaView"
-        className="pt-6 rounded-br-3xl rounded-bl-3xl shadow-lg w-full"
+        paddingHorizontal="2xl"
+        paddingVertical="none"
+        spacing="none"
+        className="w-full border-b border-typography-100 pb-4"
       >
         <AppContainer
           direction="row"
@@ -148,12 +154,12 @@ const SearchScreen = () => {
           spacing="md"
           paddingHorizontal="none"
           paddingVertical="none"
-          className="w-full"
+          className="w-full pt-5 pb-4"
           backgroundColor="background-card"
         >
           <Pressable
             onPress={handleBack}
-            className="w-10 h-10 rounded-full bg-background-light items-center justify-center"
+            className="w-9 h-9 rounded-full bg-background-section items-center justify-center"
             hitSlop={8}
             style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1 })}
             accessibilityLabel="Voltar"
@@ -162,7 +168,7 @@ const SearchScreen = () => {
             <ArrowLeft size={18} color={colors.typography[700]} />
           </Pressable>
 
-          <AppText variant="h3" className="leading-none">
+          <AppText variant="h5" color="default">
             Buscar
           </AppText>
         </AppContainer>
@@ -172,7 +178,6 @@ const SearchScreen = () => {
           value={searchText}
           onChangeText={setSearchText}
           placeholder="Buscar documentos ou conteúdo..."
-          className="w-full"
           leftIcon={AppSearchIcon}
           autoCorrect={false}
           autoCapitalize="none"

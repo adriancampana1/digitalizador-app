@@ -16,8 +16,8 @@ const NoDocumentsState = () => (
     paddingVertical="none"
     className="py-16"
   >
-    <View className="w-20 h-20 rounded-3xl bg-background-section items-center justify-center mb-xs">
-      <FilePlus size={36} color={colors.typography[300]} strokeWidth={1.5} />
+    <View className="w-16 h-16 rounded-2xl bg-background-section items-center justify-center mb-xs">
+      <FilePlus size={28} color={colors.typography[400]} strokeWidth={1.5} />
     </View>
 
     <AppText variant="h5" color="default" align="center">
@@ -45,8 +45,8 @@ const NoSearchResultsState = ({ query }: NoSearchResultsStateProps) => (
     paddingVertical="none"
     className="py-16"
   >
-    <View className="w-20 h-20 rounded-3xl bg-background-section items-center justify-center mb-xs">
-      <FileSearch size={36} color={colors.typography[300]} strokeWidth={1.5} />
+    <View className="w-16 h-16 rounded-2xl bg-background-section items-center justify-center mb-xs">
+      <FileSearch size={28} color={colors.typography[400]} strokeWidth={1.5} />
     </View>
 
     <AppText variant="h5" color="default" align="center">

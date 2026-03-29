@@ -29,21 +29,11 @@ import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import type { StackNavigationProp } from '@react-navigation/stack';
 
 const ListHeaderComponent = () => (
-  <AppContainer backgroundColor="background-light">
-    <AppContainer
-      direction="row"
-      justifyContent="space-between"
-      alignItems="center"
-      paddingHorizontal="none"
-      paddingVertical="none"
-      className="w-full mt-2"
-    >
-      <AppText variant="h4">Documentos recentes</AppText>
-      <AppText variant="body" align="right" color="secondary-400">
-        Ver todos
-      </AppText>
-    </AppContainer>
-  </AppContainer>
+  <View className="px-2xl pt-lg pb-sm">
+    <AppText variant="h5" color="default">
+      Documentos recentes
+    </AppText>
+  </View>
 );
 
 const ListDocumentCardSkeleton = () => (
@@ -90,7 +80,11 @@ const HomeScreen = () => {
       backgroundColor="background-light"
     >
       <StatusBar translucent />
-      <Header searchText={searchText} onSearchChange={setSearchText} />
+      <Header
+        userName={user?.name?.trim() || 'Usuário'}
+        searchText={searchText}
+        onSearchChange={setSearchText}
+      />
       {isViewOnly && <EnvironmentSetupBanner onPress={handleConfigurePress} />}
 
       {activeQuery?.isLoading ? (
