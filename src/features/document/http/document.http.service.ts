@@ -9,6 +9,8 @@ import type {
   DocumentResponse,
   DocumentsByFolderRequest,
   DocumentSearchRequest,
+  PagedResponse,
+  PaginationParams,
 } from '../types';
 
 class DocumentHttpService implements DocumentHttpServiceType {
@@ -43,18 +45,25 @@ class DocumentHttpService implements DocumentHttpServiceType {
     });
   }
 
-  async findAllDocuments(): Promise<
-    ApiResponse<DocumentResponse[]> | ApiError
-  > {
-    return apiClient.get('/document');
+  async findAllDocuments(
+    params?: PaginationParams
+  ): Promise<ApiResponse<PagedResponse<DocumentResponse>> | ApiError> {
+    return apiClient.get('/document', {
+      params: {
+        page: params?.page ?? 0,
+        size: params?.size ?? 10,
+      },
+    });
   }
 
   async findDocumentsByFolder(
-    request: DocumentsByFolderRequest
-  ): Promise<ApiResponse<DocumentResponse[]> | ApiError> {
+    request: DocumentsByFolderRequest & PaginationParams
+  ): Promise<ApiResponse<PagedResponse<DocumentResponse>> | ApiError> {
     return apiClient.get('/document', {
       params: {
         folderPath: request.folderPath,
+        page: request.page ?? 0,
+        size: request.size ?? 20,
       },
     });
   }

@@ -32,6 +32,8 @@ export type FolderStackParamList = {
 export type AppStackParamList = {
   AppTabs: NavigatorScreenParams<AppTabParamList>;
   ScanFlow: undefined;
+  SetupEnvironment: undefined;
+  AllDocuments: undefined;
 };
 
 export type RootStackParamList = {

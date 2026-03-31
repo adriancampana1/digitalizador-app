@@ -6,6 +6,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import CustomTabBar from '@/components/navigation/BottomTabBar';
 import FolderEditScreen from '@/features/folder/screens/FolderEditScreen';
 import FolderListScreen from '@/features/folder/screens/FolderListScreen';
+import AllDocumentsScreen from '@/features/home/screens/AllDocumentsScreen';
 import HomeScreen from '@/features/home/screens/HomeScreen';
 import ProfileScreen from '@/features/profile/screens';
 import ScanScreen from '@/features/scan/screens';
@@ -112,6 +113,7 @@ const AppNavigator = () => (
       }}
     />
     <AppStack.Screen name="SetupEnvironment" component={SetupTenantScreen} />
+    <AppStack.Screen name="AllDocuments" component={AllDocumentsScreen} />
   </AppStack.Navigator>
 );
 

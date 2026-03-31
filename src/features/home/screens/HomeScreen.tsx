@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { Alert, StatusBar, View } from 'react-native';
+import { Alert, StatusBar, TouchableOpacity, View } from 'react-native';
 
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { useNavigation } from '@react-navigation/native';
@@ -28,11 +28,16 @@ import Header from '../components/Header';
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import type { StackNavigationProp } from '@react-navigation/stack';
 
-const ListHeaderComponent = () => (
-  <View className="px-2xl pt-lg pb-sm">
+const ListHeaderComponent = ({ onVerTodos }: { onVerTodos: () => void }) => (
+  <View className="px-2xl pt-lg pb-sm flex-row items-center justify-between">
     <AppText variant="h5" color="default">
       Documentos recentes
     </AppText>
+    <TouchableOpacity onPress={onVerTodos}>
+      <AppText variant="bodySmall" color="link">
+        Ver todos
+      </AppText>
+    </TouchableOpacity>
   </View>
 );
 
@@ -62,9 +67,14 @@ const HomeScreen = () => {
       .getParent<StackNavigationProp<AppStackParamList>>()
       ?.navigate('SetupEnvironment');
 
+  const handleVerTodos = () =>
+    tabNavigation
+      .getParent<StackNavigationProp<AppStackParamList>>()
+      ?.navigate('AllDocuments' as any);
+
   const isSearching = debouncedSearch.trim().length > 0;
 
-  const allDocuments = useFindAllDocuments();
+  const allDocuments = useFindAllDocuments({ page: 0, size: 10 });
   const searchDocuments = useSearchDocuments(debouncedSearch);
   const refreshThumbnail = useRefreshThumbnail();
   const viewOriginal = useViewOriginal();
@@ -89,7 +99,7 @@ const HomeScreen = () => {
 
       {activeQuery?.isLoading ? (
         <>
-          <ListHeaderComponent />
+          <ListHeaderComponent onVerTodos={handleVerTodos} />
           <ListDocumentCardSkeleton />
         </>
       ) : (
@@ -134,7 +144,17 @@ const HomeScreen = () => {
               onRefresh={activeQuery.refetch}
             />
           }
-          ListHeaderComponent={ListHeaderComponent}
+          ListHeaderComponent={
+            isSearching ? (
+              <View className="px-2xl pt-lg pb-sm">
+                <AppText variant="h5" color="default">
+                  Documentos recentes
+                </AppText>
+              </View>
+            ) : (
+              <ListHeaderComponent onVerTodos={handleVerTodos} />
+            )
+          }
           ListEmptyComponent={
             <HomeEmptyState
               isSearching={isSearching}

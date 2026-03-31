@@ -18,7 +18,7 @@ export function useFindDocumentsByFolder(folderPath: string) {
         folderPath,
       });
       if (isApiError(response)) throw new Error(response.message);
-      return response.data;
+      return response.data.content;
     },
     enabled: !!folderPath,
   });

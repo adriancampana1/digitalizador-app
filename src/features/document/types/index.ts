@@ -48,6 +48,20 @@ export interface DocumentsByFolderRequest {
   folderPath: string;
 }
 
+export interface PagedResponse<T> {
+  content: T[];
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+  last: boolean;
+}
+
+export interface PaginationParams {
+  page?: number;
+  size?: number;
+}
+
 export interface DocumentDownloadResult {
   blob: Blob;
   fileName: string;
@@ -67,11 +81,13 @@ export interface DocumentHttpServiceType {
     request: DocumentSearchRequest
   ): Promise<ApiResponse<DocumentResponse[]> | ApiError>;
 
-  findAllDocuments(): Promise<ApiResponse<DocumentResponse[]> | ApiError>;
+  findAllDocuments(
+    params?: PaginationParams
+  ): Promise<ApiResponse<PagedResponse<DocumentResponse>> | ApiError>;
 
   findDocumentsByFolder(
-    request: DocumentsByFolderRequest
-  ): Promise<ApiResponse<DocumentResponse[]> | ApiError>;
+    request: DocumentsByFolderRequest & PaginationParams
+  ): Promise<ApiResponse<PagedResponse<DocumentResponse>> | ApiError>;
 
   downloadDocument(documentId: string): Promise<ApiResponse<Blob> | ApiError>;
 }
